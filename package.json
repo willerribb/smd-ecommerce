@@ -1,0 +1,40 @@
+{
+  "name": "smd-ecommerce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "css-compile": "sass --load-path=node_modules --style expanded --source-map --embed-sources scss:css",
+    "css-prefix": "postcss --config postcss.config.js --replace \"css/*.css\" \"!css/*.min.css\"",
+    "build": "npm-run-all --sequential css-compile css-prefix",
+    "watch": "nodemon --watch scss/ --ext scss --exec \"npm run build\"",
+    "serve": "sirv --port 8080 --dev .",
+    "start": "npm-run-all build --parallel watch serve",
+    "lint": "stylelint \"scss/**/*.scss\""
+  },
+  "private": true,
+  "dependencies": {
+    "@floating-ui/dom": "^1.8.0",
+    "bootstrap": "^5.3.8",
+    "vanilla-calendar-pro": "^3.4.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "autoprefixer": "^10.6.1",
+    "nodemon": "^3.1.14",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.5.31",
+    "postcss-cli": "^12.0.0",
+    "sass": "^1.106.1",
+    "sirv-cli": "^3.0.1",
+    "stylelint": "^16.26.1",
+    "stylelint-config-twbs-bootstrap": "^16.1.0"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true
+  }
+}
