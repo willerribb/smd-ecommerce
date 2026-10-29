@@ -1,0 +1,33 @@
+{
+  "name": "smd-ecommerce",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "npm run js && npm run css:watch",
+    "build": "npm run js && npm run css:build && npm run css:prefix",
+    "css:watch": "sass --watch --load-path=node_modules --quiet-deps --embed-sources src/main/frontend/scss/styles.scss src/main/webapp/css/styles.css",
+    "css:build": "sass --load-path=node_modules --quiet-deps --style compressed --no-source-map src/main/frontend/scss/styles.scss src/main/webapp/css/styles.css",
+    "css:prefix": "postcss src/main/webapp/css/styles.css --replace --no-map",
+    "js": "node -e \"const fs=require('fs');fs.mkdirSync('src/main/webapp/vendor/bootstrap',{recursive:true});fs.copyFileSync('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js','src/main/webapp/vendor/bootstrap/bootstrap.bundle.min.js')\"",
+    "lint": "stylelint \"src/main/frontend/scss/**/*.scss\""
+  },
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^5.3.8"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.31",
+    "postcss-cli": "^12.0.0",
+    "sass": "^1.106.1",
+    "stylelint": "^16.26.1",
+    "stylelint-config-twbs-bootstrap": "^16.1.0"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true
+  }
+}

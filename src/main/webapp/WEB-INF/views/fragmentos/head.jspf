@@ -1,0 +1,5 @@
+<%-- /WEB-INF/views/fragmentos/head.jspf --%>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><c:out value="${titulo}"/></title>
+<link href="${raiz}/css/styles.css" rel="stylesheet">

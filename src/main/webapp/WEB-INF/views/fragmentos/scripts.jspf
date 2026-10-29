@@ -1,0 +1,2 @@
+<%-- /WEB-INF/views/fragmentos/scripts.jspf --%>
+<script src="${raiz}/vendor/bootstrap/bootstrap.bundle.min.js"></script>

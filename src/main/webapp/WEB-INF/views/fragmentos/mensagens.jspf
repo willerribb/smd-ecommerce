@@ -1,0 +1,20 @@
+<%--
+    Mensagens comuns a todas as páginas.
+    A página que inclui este fragmento precisa declarar a taglib "c".
+--%>
+
+<%-- Mensagem guardada na sessão antes de um redirecionamento: exibida uma única vez --%>
+<c:if test="${not empty sessionScope.mensagem}">
+    <div class="alert alert-${sessionScope.tipoMensagem}" role="alert">
+        <c:out value="${sessionScope.mensagem}"/>
+    </div>
+    <c:remove var="mensagem" scope="session"/>
+    <c:remove var="tipoMensagem" scope="session"/>
+</c:if>
+
+<%-- Erro de validação enviado pelo servlet (quando não pertence a uma seção específica da página) --%>
+<c:if test="${not empty erro and empty secao}">
+    <div class="alert alert-danger" role="alert">
+        <c:out value="${erro}"/>
+    </div>
+</c:if>
