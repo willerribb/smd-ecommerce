@@ -13,15 +13,9 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Protege as áreas restritas. Tudo que estiver nas URLs abaixo passa por
- * aqui antes de chegar ao servlet:
- *
- *   /minha-conta e /minha-conta/...   exige usuário logado (cliente ou admin)
- *   /admin/...                        exige usuário logado E administrador
- *                                     (reservado para as telas de gerência)
- */
 
 @WebFilter({"/minha-conta", "/minha-conta/*", "/admin/*"})
 public class AutenticacaoFilter implements Filter {
@@ -41,8 +35,12 @@ public class AutenticacaoFilter implements Filter {
 
         Usuario usuario = Sessao.getUsuarioLogado(request);
         if (usuario == null) {
-            Sessao.definirMensagem(request, "warning", "Entre na sua conta para continuar.");
-            response.sendRedirect(request.getContextPath() + "/login");
+            Map<String, String> valores = new HashMap<>();
+            valores.put("destino", "GET".equals(request.getMethod())
+                    ? request.getRequestURI()
+                    : request.getContextPath() + "/minha-conta");
+            Sessao.abrirModal(request, "login", "warning", "Entre na sua conta para continuar.", valores);
+            response.sendRedirect(request.getContextPath() + "/");
             return;
         }
 

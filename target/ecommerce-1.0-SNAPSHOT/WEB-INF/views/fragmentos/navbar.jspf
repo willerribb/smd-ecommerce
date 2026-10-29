@@ -1,24 +1,68 @@
 <%--
     Barra de navegação comum a todas as páginas.
-    A página que inclui este fragmento precisa declarar a taglib "c" e a
-    variável "raiz" (<c:set var="raiz" value="${pageContext.request.contextPath}"/>).
+    A página precisa ter declarado a taglib "c" e a variável "raiz".
+    Opcional: <c:set var="menuAtivo" value="home"/> destaca o link Home.
 --%>
-<nav class="navbar bg-body border-bottom">
+<c:set var="usuarioNav" value="${sessionScope.usuarioLogado}"/>
+
+<nav class="navbar navbar-expand-lg bg-body border-bottom">
     <div class="container">
-        <a class="navbar-brand" href="${raiz}/">Loja</a>
-        <div class="d-flex align-items-center gap-2">
+        <a class="navbar-brand fw-bold" href="${raiz}/">IUVe</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#menuPrincipal" aria-controls="menuPrincipal"
+                aria-expanded="false" aria-label="Abrir menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menuPrincipal">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link ${menuAtivo == 'home' ? 'active' : ''}" href="${raiz}/"
+                       ${menuAtivo == 'home' ? 'aria-current="page"' : ''}>Home</a>
+                </li>
+                <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Produtos</a></li>
+                <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Categorias</a></li>
+            </ul>
+
             <c:choose>
-                <c:when test="${not empty sessionScope.usuarioLogado}">
-                    <a class="btn btn-link text-decoration-none" href="${raiz}/minha-conta">Minha conta</a>
-                    <form action="${raiz}/logout" method="post" class="m-0">
-                        <button type="submit" class="btn btn-outline-secondary btn-sm">Sair</button>
-                    </form>
+                <c:when test="${not empty usuarioNav}">
+                    <div class="dropdown">
+                        <button class="btn d-flex align-items-center gap-2 dropdown-toggle border-0"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                 fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                            </svg>
+                            <span class="d-flex flex-column align-items-start lh-sm">
+                                <span>Olá, <c:out value="${usuarioNav.primeiroNome}"/></span>
+                                <c:if test="${usuarioNav.admin}">
+                                    <span class="badge text-bg-dark mt-1">ADMIN</span>
+                                </c:if>
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="${raiz}/minha-conta">Editar perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="${raiz}/logout" method="post" class="m-0">
+                                    <button type="submit" class="dropdown-item">Sair</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 </c:when>
+
                 <c:otherwise>
-                    <a class="btn btn-link text-decoration-none" href="${raiz}/login">Entrar</a>
-                    <a class="btn btn-primary btn-sm" href="${raiz}/cadastro">Criar conta</a>
+                    <button type="button" class="btn btn-primary"
+                            data-bs-toggle="modal" data-bs-target="#modalLogin">
+                        Entrar
+                    </button>
                 </c:otherwise>
             </c:choose>
         </div>
     </div>
 </nav>
+
+<%@ include file="/WEB-INF/views/fragmentos/modais-conta.jspf" %>

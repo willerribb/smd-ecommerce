@@ -1,20 +1,13 @@
 <%--
-    Mensagens comuns a todas as páginas.
-    A página que inclui este fragmento precisa declarar a taglib "c".
+    Mensagem guardada na sessão antes de um redirecionamento
+    (Sessao.definirMensagem): exibida uma única vez e depois removida.
+    A página precisa ter declarado a taglib "c".
 --%>
-
-<%-- Mensagem guardada na sessão antes de um redirecionamento: exibida uma única vez --%>
 <c:if test="${not empty sessionScope.mensagem}">
-    <div class="alert alert-${sessionScope.tipoMensagem}" role="alert">
+    <div class="alert alert-${sessionScope.tipoMensagem} alert-dismissible fade show" role="alert">
         <c:out value="${sessionScope.mensagem}"/>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
     </div>
     <c:remove var="mensagem" scope="session"/>
     <c:remove var="tipoMensagem" scope="session"/>
-</c:if>
-
-<%-- Erro de validação enviado pelo servlet (quando não pertence a uma seção específica da página) --%>
-<c:if test="${not empty erro and empty secao}">
-    <div class="alert alert-danger" role="alert">
-        <c:out value="${erro}"/>
-    </div>
 </c:if>

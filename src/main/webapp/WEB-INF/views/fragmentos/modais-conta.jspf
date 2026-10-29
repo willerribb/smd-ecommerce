@@ -1,0 +1,173 @@
+<%--
+    Modais de login e cadastro, incluídos pela navbar (só para visitantes).
+
+    Quando o login ou o cadastro falham, o servlet pede pela sessão que o
+    modal seja reaberto (Sessao.abrirModal), com uma mensagem e com os
+    campos preenchidos. Este fragmento atende o pedido e o remove no final,
+    para que ele valha uma única vez.
+--%>
+<c:if test="${empty sessionScope.usuarioLogado}">
+
+    <c:set var="modalPedido" value="${sessionScope.modal}"/>
+    <c:set var="valores" value="${sessionScope.valoresModal}"/>
+
+    <%--
+        Dois campos ocultos vão em cada formulário:
+          origem   página onde o modal está aberto (para onde se volta se der erro)
+          destino  página para onde ir depois de entrar (normalmente a mesma;
+                   diferente quando o login foi pedido ao tentar abrir uma área restrita)
+    --%>
+    <c:set var="paginaAtual" value="${requestScope['javax.servlet.forward.request_uri']}"/>
+    <c:if test="${empty paginaAtual}">
+        <c:set var="paginaAtual" value="${pageContext.request.requestURI}"/>
+    </c:if>
+    <c:set var="destino" value="${not empty valores.destino ? valores.destino : paginaAtual}"/>
+
+    <%-- Valores para preencher os campos: só os do modal que foi pedido --%>
+    <c:set var="valoresLogin" value="${modalPedido == 'login' ? valores : null}"/>
+    <c:set var="valoresCadastro" value="${modalPedido == 'cadastro' ? valores : null}"/>
+
+    <%-- ============================== Login ============================== --%>
+    <div class="modal fade" id="modalLogin" tabindex="-1" aria-labelledby="tituloModalLogin"
+         aria-hidden="true" ${modalPedido == 'login' ? 'data-abrir-ao-carregar' : ''}>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="tituloModalLogin">Entrar</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <form action="${raiz}/login" method="post" class="needs-validation" novalidate>
+                    <div class="modal-body">
+                        <c:if test="${modalPedido == 'login' and not empty sessionScope.mensagemModal}">
+                            <div class="alert alert-${sessionScope.tipoMensagemModal}" role="alert">
+                                <c:out value="${sessionScope.mensagemModal}"/>
+                            </div>
+                        </c:if>
+
+                        <input type="hidden" name="origem" value="<c:out value='${paginaAtual}'/>">
+                        <input type="hidden" name="destino" value="<c:out value='${destino}'/>">
+
+                        <div class="mb-3">
+                            <label for="loginEntrar" class="form-label">Login</label>
+                            <input type="text" class="form-control" id="loginEntrar" name="login"
+                                   value="<c:out value='${valoresLogin.login}'/>"
+                                   autocomplete="username" required>
+                            <div class="invalid-feedback">Informe seu login.</div>
+                        </div>
+                        <div>
+                            <label for="senhaEntrar" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="senhaEntrar" name="senha"
+                                   autocomplete="current-password" required>
+                            <div class="invalid-feedback">Informe sua senha.</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer flex-column align-items-stretch">
+                        <button type="submit" class="btn btn-primary">Entrar</button>
+                        <p class="text-center mb-0 mt-2">
+                            Ainda não tem conta?
+                            <%-- Botão que troca este modal pelo de cadastro --%>
+                            <button type="button" class="btn btn-link p-0 align-baseline"
+                                    data-bs-target="#modalCadastro" data-bs-toggle="modal">
+                                Criar conta
+                            </button>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%-- ============================= Cadastro ============================= --%>
+    <div class="modal fade" id="modalCadastro" tabindex="-1" aria-labelledby="tituloModalCadastro"
+         aria-hidden="true" ${modalPedido == 'cadastro' ? 'data-abrir-ao-carregar' : ''}>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="tituloModalCadastro">Criar conta</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <%-- O <form> envolve corpo e rodapé, para o botão do rodapé enviar o formulário --%>
+                <form action="${raiz}/cadastro" method="post" class="needs-validation" novalidate>
+                    <div class="modal-body">
+                        <c:if test="${modalPedido == 'cadastro' and not empty sessionScope.mensagemModal}">
+                            <div class="alert alert-${sessionScope.tipoMensagemModal}" role="alert">
+                                <c:out value="${sessionScope.mensagemModal}"/>
+                            </div>
+                        </c:if>
+
+                        <input type="hidden" name="origem" value="<c:out value='${paginaAtual}'/>">
+                        <input type="hidden" name="destino" value="<c:out value='${destino}'/>">
+
+                        <div class="mb-3">
+                            <label for="nomeCadastro" class="form-label">Nome completo</label>
+                            <input type="text" class="form-control" id="nomeCadastro" name="nome"
+                                   value="<c:out value='${valoresCadastro.nome}'/>"
+                                   maxlength="150" autocomplete="name" required>
+                            <div class="invalid-feedback">Informe seu nome.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="emailCadastro" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="emailCadastro" name="email"
+                                   value="<c:out value='${valoresCadastro.email}'/>"
+                                   maxlength="150" autocomplete="email" required>
+                            <div class="invalid-feedback">Informe um e-mail válido.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="enderecoCadastro" class="form-label">Endereço de entrega</label>
+                            <input type="text" class="form-control" id="enderecoCadastro" name="endereco"
+                                   value="<c:out value='${valoresCadastro.endereco}'/>"
+                                   maxlength="255" autocomplete="street-address" required>
+                            <div class="invalid-feedback">Informe seu endereço.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginCadastro" class="form-label">Login</label>
+                            <input type="text" class="form-control" id="loginCadastro" name="login"
+                                   value="<c:out value='${valoresCadastro.login}'/>"
+                                   minlength="3" maxlength="50" pattern="[A-Za-z0-9._\-]{3,50}"
+                                   autocomplete="username" aria-describedby="ajudaLoginCadastro" required>
+                            <div id="ajudaLoginCadastro" class="form-text">
+                                De 3 a 50 caracteres: letras, números, ponto, hífen ou sublinhado.
+                            </div>
+                            <div class="invalid-feedback">Use de 3 a 50 caracteres, sem espaços ou acentos.</div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label for="senhaCadastro" class="form-label">Senha</label>
+                                <input type="password" class="form-control" id="senhaCadastro" name="senha"
+                                       minlength="6" autocomplete="new-password" required>
+                                <div class="invalid-feedback">Use pelo menos 6 caracteres.</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="confirmacaoCadastro" class="form-label">Confirme a senha</label>
+                                <input type="password" class="form-control" id="confirmacaoCadastro"
+                                       name="confirmacaoSenha" data-confirma="senhaCadastro"
+                                       autocomplete="new-password" required>
+                                <div class="invalid-feedback">As senhas não são iguais.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer flex-column align-items-stretch">
+                        <button type="submit" class="btn btn-primary">Criar conta</button>
+                        <p class="text-center mb-0 mt-2">
+                            Já tem conta?
+                            <button type="button" class="btn btn-link p-0 align-baseline"
+                                    data-bs-target="#modalLogin" data-bs-toggle="modal">
+                                Entrar
+                            </button>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</c:if>
+
+<%-- O pedido de abertura vale uma única vez --%>
+<c:remove var="modal" scope="session"/>
+<c:remove var="mensagemModal" scope="session"/>
+<c:remove var="tipoMensagemModal" scope="session"/>
+<c:remove var="valoresModal" scope="session"/>

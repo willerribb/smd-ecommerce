@@ -2,6 +2,7 @@ package ufc.servlet;
 
 import ufc.dao.UsuarioDAO;
 import ufc.modelo.Usuario;
+import ufc.util.Navegacao;
 import ufc.util.Sessao;
 import ufc.util.ValidadorUsuario;
 
@@ -11,24 +12,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet("/cadastro")
 public class CadastroClienteServlet extends HttpServlet {
 
-    private static final String PAGINA = "/WEB-INF/views/cadastro.jsp";
-
-    // O DAO não guarda estado, então uma única instância pode ser compartilhada
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        if (Sessao.getUsuarioLogado(request) != null) {
-            response.sendRedirect(request.getContextPath() + "/");
-            return;
+        if (Sessao.getUsuarioLogado(request) == null) {
+            Sessao.abrirModal(request, "cadastro", null, null, null);
         }
-        request.getRequestDispatcher(PAGINA).forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/");
     }
 
     @Override
@@ -43,6 +41,8 @@ public class CadastroClienteServlet extends HttpServlet {
         String endereco = ValidadorUsuario.limpar(request.getParameter("endereco"));
         String senha = request.getParameter("senha");                 // senha não leva trim
         String confirmacao = request.getParameter("confirmacaoSenha");
+        String origem = Navegacao.destinoSeguro(request, request.getParameter("origem"));
+        String destino = Navegacao.destinoSeguro(request, request.getParameter("destino"));
 
         String erro = ValidadorUsuario.validarDados(nome, login, email, endereco);
         if (erro == null) {
@@ -55,22 +55,27 @@ public class CadastroClienteServlet extends HttpServlet {
             erro = "Já existe uma conta com esse e-mail. Se for sua, entre com seu login.";
         }
 
+        Usuario novoCliente = new Usuario(nome, login, senha, email, endereco, false);
+
+        if (erro == null && !usuarioDAO.inserir(novoCliente)) {
+            erro = "Não foi possível concluir o cadastro agora. Tente novamente em alguns minutos.";
+        }
+
         if (erro != null) {
-            request.setAttribute("erro", erro);
-            request.getRequestDispatcher(PAGINA).forward(request, response);
+            Map<String, String> valores = new HashMap<>();
+            valores.put("nome", nome);
+            valores.put("email", email);
+            valores.put("endereco", endereco);
+            valores.put("login", login);
+            valores.put("destino", destino);
+            Sessao.abrirModal(request, "cadastro", "danger", erro, valores);
+            response.sendRedirect(origem);
             return;
         }
 
-
-        Usuario novoCliente = new Usuario(nome, login, senha, email, endereco, false);
-
-        if (usuarioDAO.inserir(novoCliente)) {
-            Sessao.definirMensagem(request, "success", "Conta criada. Entre com seu login e senha.");
-            response.sendRedirect(request.getContextPath() + "/login");
-        } else {
-            request.setAttribute("erro",
-                    "Não foi possível concluir o cadastro agora. Tente novamente em alguns minutos.");
-            request.getRequestDispatcher(PAGINA).forward(request, response);
-        }
+        Sessao.iniciar(request, novoCliente);
+        Sessao.definirMensagem(request, "success",
+                "Conta criada! Boas-vindas, " + novoCliente.getPrimeiroNome() + ".");
+        response.sendRedirect(destino);
     }
 }

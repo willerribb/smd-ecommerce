@@ -1,5 +1,9 @@
-<%-- /WEB-INF/views/fragmentos/head.jspf --%>
+<%--
+    Conteúdo comum do <head>. A página precisa definir, antes do include:
+      <c:set var="raiz" value="${pageContext.request.contextPath}"/>
+      <c:set var="titulo" value="Título da página"/>
+--%>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><c:out value="${titulo}"/></title>
+<title><c:out value="${titulo}"/> | IUVe</title>
 <link href="${raiz}/css/styles.css" rel="stylesheet">
