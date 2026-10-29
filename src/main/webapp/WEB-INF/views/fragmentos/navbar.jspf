@@ -1,0 +1,24 @@
+<%--
+    Barra de navegação comum a todas as páginas.
+    A página que inclui este fragmento precisa declarar a taglib "c" e a
+    variável "raiz" (<c:set var="raiz" value="${pageContext.request.contextPath}"/>).
+--%>
+<nav class="navbar bg-body border-bottom">
+    <div class="container">
+        <a class="navbar-brand" href="${raiz}/">Loja</a>
+        <div class="d-flex align-items-center gap-2">
+            <c:choose>
+                <c:when test="${not empty sessionScope.usuarioLogado}">
+                    <a class="btn btn-link text-decoration-none" href="${raiz}/minha-conta">Minha conta</a>
+                    <form action="${raiz}/logout" method="post" class="m-0">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Sair</button>
+                    </form>
+                </c:when>
+                <c:otherwise>
+                    <a class="btn btn-link text-decoration-none" href="${raiz}/login">Entrar</a>
+                    <a class="btn btn-primary btn-sm" href="${raiz}/cadastro">Criar conta</a>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </div>
+</nav>
