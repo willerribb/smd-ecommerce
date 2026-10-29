@@ -42,5 +42,6 @@
                 <version>3.3.2</version>
             </plugin>
         </plugins>
+        <finalName>ecommerce</finalName>
     </build>
 </project>

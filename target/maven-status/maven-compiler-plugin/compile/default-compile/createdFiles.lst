@@ -1,0 +1,5 @@
+ufc/modelo/Categoria.class
+ufc/dao/ProdutoDAO.class
+ufc/modelo/Produto.class
+ufc/util/Navegacao.class
+ufc/servlet/HomeServlet.class
