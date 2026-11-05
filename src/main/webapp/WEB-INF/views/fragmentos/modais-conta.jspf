@@ -126,12 +126,12 @@
                             <label for="loginCadastro" class="form-label">Login</label>
                             <input type="text" class="form-control" id="loginCadastro" name="login"
                                    value="<c:out value='${valoresCadastro.login}'/>"
-                                   minlength="3" maxlength="50" pattern="[A-Za-z0-9._\-]{3,50}"
+                                   minlength="6" maxlength="50" pattern="[A-Za-z0-9._\-]{6,50}"
                                    autocomplete="username" aria-describedby="ajudaLoginCadastro" required>
                             <div id="ajudaLoginCadastro" class="form-text">
-                                De 3 a 50 caracteres: letras, números, ponto, hífen ou sublinhado.
+                                Entre 6 a 50 caracteres, composto por letras, números, ponto, hífen ou sublinhado.
                             </div>
-                            <div class="invalid-feedback">Use de 3 a 50 caracteres, sem espaços ou acentos.</div>
+                            <div class="invalid-feedback">Use entre 6 a 50 caracteres, sem espaços ou acentos.</div>
                         </div>
                         <div class="row g-3">
                             <div class="col-sm-6">

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entrar | IUVe</title>
+    <link rel="stylesheet" href="../../webapp/css/styles.css">
+    <link rel="stylesheet" href="../../webapp/css/iuve.css">
+</head>
+<body>
+
+<div class="row g-0 min-vh-100">
+    <div class="col-lg-6 d-none d-lg-block vh-100 sticky-lg-top p-2">
+        <img src="https://www.placehold.co/1200x1600?text=PLACEHOLDER" alt="" class="w-100 h-100 object-fit-cover rounded-4">
+    </div>
+
+    <main class="col-lg-6 d-flex align-items-center justify-content-center px-4 py-5">
+        <div class="acesso w-50">
+            <header class="text-center mb-4">
+                <img src="https://www.placehold.co/48.png" alt="IUVe" width="48" height="48" class="mb-3">
+                <h1 class="h3 fw-bold mb-1">Boas-vindas ao IUVe</h1>
+                <p>Sua plataforma de compras online.</p>
+            </header>
+
+            <section id="loginPanel" data-painel aria-labelledby="tituloLogin">
+                <h2 id="tituloLogin" class="h5 mb-3">Entrar</h2>
+                <form action="#" method="post" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="login" class="form-label">Login</label>
+                        <input type="text" class="form-control" id="login" name="login" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+                        <div class="invalid-feedback">Informe seu nome de usuário ou e-mail.</div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Senha</label>
+                        <div class="input-group has-validation">
+                            <input type="password" class="form-control" id="password" name="senha" autocomplete="current-password" required>
+                            <button type="button" class="btn btn-outline-secondary btn-senha" data-mostrar-senha="password" aria-label="Mostrar senha" aria-pressed="false">
+                                <svg class="icone-mostrar" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                </svg>
+                                <svg class="icone-ocultar" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                                    <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+                                    <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+                                    <path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
+                                </svg>
+                            </button>
+                            <div class="invalid-feedback">Informe sua senha.</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
+
+                <p class="text-center mt-4 mb-0">
+                    Ainda não criou uma conta?
+                    <button type="button" class="btn btn-link p-0 align-baseline" data-alternar="signupPanel">Criar conta</button>
+                </p>
+            </section>
+
+            <section id="signupPanel" data-painel aria-labelledby="tituloSignup" hidden>
+                <h2 id="tituloSignup" class="h5 mb-3">Criar conta</h2>
+
+                <form action="#" method="post" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome completo</label>
+                        <input type="text" class="form-control" id="name" name="nome" maxlength="150" autocomplete="name" required>
+                        <div class="invalid-feedback">Informe seu nome completo.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailSignup" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="emailSignup" name="email" maxlength="150" autocomplete="email" required>
+                        <div class="invalid-feedback">Informe um e-mail válido.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Endereço de entrega</label>
+                        <input type="text" class="form-control" id="address" name="endereco" maxlength="255" autocomplete="street-address" required>
+                        <div class="invalid-feedback">Informe um endereço válido.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginSignup" class="form-label">Nome de usuário</label>
+                        <input type="text" class="form-control" id="loginSignup" name="login"
+                               minlength="6" maxlength="50" pattern="[A-Za-z0-9._\-]{6,50}"
+                               autocomplete="username" autocapitalize="none" spellcheck="false"
+                               aria-describedby="ajudaLoginCadastro" required>
+                        <div id="ajudaLoginCadastro" class="form-text">
+                            De 6 a 50 caracteres, entre letras, números, ponto, hífen ou sublinhado.
+                        </div>
+                        <div class="invalid-feedback">Use de 6 a 50 caracteres, sem espaços ou acentos.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="passwordSignup" class="form-label">Senha</label>
+                        <div class="input-group has-validation">
+                            <input type="password" class="form-control" id="passwordSignup" name="senha" minlength="6" autocomplete="new-password" required>
+                            <button type="button" class="btn btn-outline-secondary botao-senha"
+                                    data-mostrar-senha="passwordSignup" aria-label="Mostrar senha" aria-pressed="false">
+                                <svg class="icone-mostrar" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                </svg>
+                                <svg class="icone-ocultar" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                                    <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+                                    <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+                                    <path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
+                                </svg>
+                            </button>
+                            <div class="invalid-feedback">A senha requer pelo menos 6 caracteres.</div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="confirmSignup" class="form-label">Confirme a senha</label>
+                        <input type="password" class="form-control" id="confirmSignup"
+                               name="confirmSignup" data-confirma="passwordSignup" required>
+                        <div class="invalid-feedback">As senhas não são iguais.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Criar conta</button>
+                </form>
+
+                <p class="text-center mt-4 mb-0">
+                    Já tem conta?
+                    <button type="button" class="btn btn-link p-0 align-baseline" data-alternar="loginPanel">Entrar</button>
+                </p>
+            </section>
+
+            <p class="text-center mt-3 mb-0"><a href="#" class="link-secondary">Explorar os produtos sem criar conta</a></p>
+        </div>
+    </main>
+</div>
+
+<script src="../../webapp/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="../../webapp/js/app.js"></script>
+</body>
+</html>

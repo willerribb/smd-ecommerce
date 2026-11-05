@@ -1,0 +1,6 @@
+.acesso { max-width: 25rem; }
+
+.botao-senha[aria-pressed="false"] .icone-ocultar,
+.botao-senha[aria-pressed="true"] .icone-mostrar {
+    display: none;
+}

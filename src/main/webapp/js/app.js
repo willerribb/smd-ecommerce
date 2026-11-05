@@ -35,3 +35,30 @@ const modalPedido = document.querySelector(".modal[data-abrir-ao-carregar]");
 if (modalPedido) {
     bootstrap.Modal.getOrCreateInstance(modalPedido).show();
 }
+
+// 5. Painéis alternáveis (login e cadastro na mesma página, sem mudar o endereço).
+//    <button data-alternar="idDoPainel"> mostra o painel indicado e esconde os
+//    outros elementos [data-painel] que estão no mesmo nível dele.
+document.querySelectorAll("[data-alternar]").forEach(botao => {
+    botao.addEventListener("click", () => {
+        const destino = document.getElementById(botao.dataset.alternar);
+        destino.parentElement.querySelectorAll(":scope > [data-painel]").forEach(painel => {
+            painel.hidden = painel !== destino;
+        });
+        // leva o cursor ao primeiro campo do painel aberto (ajuda quem usa teclado e leitor de tela)
+        const campo = destino.querySelector("input:not([type=hidden])");
+        if (campo) campo.focus();
+    });
+});
+
+// 6. Mostrar e ocultar senha: <button data-mostrar-senha="idDoCampo" aria-pressed="false">.
+//    O aria-pressed informa o estado ao leitor de tela, e o CSS usa o mesmo
+//    atributo para trocar o ícone (olho aberto ou riscado).
+document.querySelectorAll("[data-mostrar-senha]").forEach(botao => {
+    const campo = document.getElementById(botao.dataset.mostrarSenha);
+    botao.addEventListener("click", () => {
+        const mostrar = campo.type === "password";
+        campo.type = mostrar ? "text" : "password";
+        botao.setAttribute("aria-pressed", String(mostrar));
+    });
+});

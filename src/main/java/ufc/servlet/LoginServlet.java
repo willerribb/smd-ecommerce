@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
 
         Usuario usuario = null;
         if (!ValidadorUsuario.vazio(login) && !ValidadorUsuario.vazio(senha)) {
-            usuario = usuarioDAO.autenticar(login, senha);
+            usuario = usuarioDAO.authenticate(login, senha);
         }
 
         if (usuario == null) {

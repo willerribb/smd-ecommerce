@@ -33,9 +33,9 @@ public class ExcluirContaServlet extends HttpServlet {
         String senha = request.getParameter("senha");
 
         String erro = null;
-        if (ValidadorUsuario.vazio(senha) || usuarioDAO.autenticar(logado.getLogin(), senha) == null) {
+        if (ValidadorUsuario.vazio(senha) || usuarioDAO.authenticate(logado.getLogin(), senha) == null) {
             erro = "A senha informada está incorreta. Sua conta não foi excluída.";
-        } else if (!usuarioDAO.excluir(logado.getId())) {
+        } else if (!usuarioDAO.deleteUser(logado.getId())) {
             erro = "Não foi possível excluir a conta agora. Tente novamente em alguns minutos.";
         }
 

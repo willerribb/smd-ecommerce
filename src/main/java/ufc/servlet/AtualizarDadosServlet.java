@@ -53,7 +53,7 @@ public class AtualizarDadosServlet extends HttpServlet {
         Usuario atualizado = new Usuario(logado.getId(), nome, login, null,
                 email, endereco, logado.isAdmin(), true);
 
-        if (!usuarioDAO.atualizar(atualizado)) {
+        if (!usuarioDAO.update(atualizado)) {
             MinhaContaServlet.mostrarErro(request, response, "dados",
                     "Não foi possível salvar agora. Tente novamente em alguns minutos.");
             return;

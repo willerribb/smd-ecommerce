@@ -58,9 +58,9 @@
                             <label for="login" class="form-label">Login</label>
                             <input type="text" class="form-control" id="login" name="login"
                                    value="<c:out value='${editandoDados ? param.login : usuario.login}'/>"
-                                   minlength="3" maxlength="50" pattern="[A-Za-z0-9._\-]{3,50}"
+                                   minlength="6" maxlength="50" pattern="[A-Za-z0-9._\-]{6,50}"
                                    autocomplete="username" required>
-                            <div class="invalid-feedback">Use de 3 a 50 caracteres: letras, números, ponto, hífen ou sublinhado.</div>
+                            <div class="invalid-feedback">Use de 6 a 50 caracteres, entre letras, números, ponto, hífen ou sublinhado.</div>
                         </div>
                         <button type="submit" class="btn btn-primary">Salvar alterações</button>
                     </form>

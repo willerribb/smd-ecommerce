@@ -37,13 +37,13 @@ public class AlterarSenhaServlet extends HttpServlet {
 
         String erro = null;
         if (ValidadorUsuario.vazio(senhaAtual)
-                || usuarioDAO.autenticar(logado.getLogin(), senhaAtual) == null) {
+                || usuarioDAO.authenticate(logado.getLogin(), senhaAtual) == null) {
             erro = "A senha atual está incorreta.";
         }
         if (erro == null) {
             erro = ValidadorUsuario.validarNovaSenha(novaSenha, confirmacao);
         }
-        if (erro == null && !usuarioDAO.alterarSenha(logado.getId(), novaSenha)) {
+        if (erro == null && !usuarioDAO.changePassword(logado.getId(), novaSenha)) {
             erro = "Não foi possível alterar a senha agora. Tente novamente em alguns minutos.";
         }
 

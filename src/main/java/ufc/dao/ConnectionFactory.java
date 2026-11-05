@@ -1,21 +1,37 @@
 package ufc.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class ConnectionFactory {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/ecommerce_db";
-    private static final String USUARIO = "postgres";
-    private static final String SENHA = "admin";
+    private static final String URL;
+    private static final String USUARIO;
+    private static final String SENHA;
 
     static {
+        Properties config = new Properties();
+        try (InputStream input = ConnectionFactory.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (input == null) {
+                throw new IllegalStateException("db.properties file NOT FOUND. Copy db.properties.example file from the /resources/ folder and fill in the appropriate fields.");
+            }
+            config.load(input);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to read db.properties", e);
+        }
+
+        URL = config.getProperty("db.url");
+        USUARIO = config.getProperty("db.usuario");
+        SENHA = config.getProperty("db.senha");
+
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(
-                    "Driver JDBC do PostgreSQL não encontrado. Verifique se o .jar está no projeto.", e);
+            throw new IllegalStateException("PostgreSQL JDBC Driver not found.", e);
         }
     }
 

@@ -1,0 +1,23 @@
+# IntelliJ IDEA (recriado pela IDE a partir do pom.xml)
+/.idea/
+*.iml
+
+# Build do Maven
+/target/
+
+# Dependências do npm (recriadas com npm install)
+/node_modules/
+npm-debug.log*
+
+# Mapa de código gerado pelo "npm run dev" (sass --watch); não vai para produção
+src/main/webapp/css/*.map
+
+# Configuração local com credenciais do banco
+src/main/resources/db.properties
+
+# Arquivos de sistema do Windows
+Thumbs.db
+desktop.ini
+
+# Repomix
+repomix-output.xml

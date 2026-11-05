@@ -1,6 +1,7 @@
 package ufc.dao;
 
 import ufc.modelo.Usuario;
+import ufc.util.Senha;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,8 +15,9 @@ public class UsuarioDAO {
 
     private static final String COLUNAS = "id, nome, login, senha, email, endereco, admin, ativo";
 
-    /** insere um novo usuário com o id gerado pelo banco */
-    public boolean inserir(Usuario usuario) {
+    /** inserts a new user, id provided by the db */
+    public boolean insert(Usuario usuario) {
+
         String sql = "INSERT INTO usuario (nome, login, senha, email, endereco, admin) "
                    + "VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -24,7 +26,7 @@ public class UsuarioDAO {
 
             stmt.setString(1, usuario.getNome());
             stmt.setString(2, usuario.getLogin());
-            stmt.setString(3, usuario.getSenha());
+            stmt.setString(3, Senha.generateHash(usuario.getSenha())); //generates the hash
             stmt.setString(4, usuario.getEmail());
             stmt.setString(5, usuario.getEndereco());
             stmt.setBoolean(6, usuario.isAdmin());
@@ -41,13 +43,13 @@ public class UsuarioDAO {
             return true;
 
         } catch (SQLException e) {
-            registrarErro("inserir", e);
+            registrarErro("insert", e);
             return false;
         }
     }
 
-    /** atualiza os dados de um usuário *ativo*. sem alterar a senha -> temos o método alterarSenha. */
-    public boolean atualizar(Usuario usuario) {
+    /** updates a given active user's data. for password changing, we have a separate method. */
+    public boolean update(Usuario usuario) {
         String sql = "UPDATE usuario SET nome = ?, login = ?, email = ?, endereco = ?, admin = ? "
                    + "WHERE id = ? AND ativo";
 
@@ -64,36 +66,31 @@ public class UsuarioDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            registrarErro("atualizar", e);
+            registrarErro("update", e);
             return false;
         }
     }
 
-    /** troca a senha de um usuário ativo. */
-    public boolean alterarSenha(int id, String novaSenha) {
+    /** changes an active user's password */
+    public boolean changePassword(int id, String novaSenha) {
         String sql = "UPDATE usuario SET senha = ? WHERE id = ? AND ativo";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, novaSenha);
+            stmt.setString(1, Senha.generateHash(novaSenha));
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            registrarErro("alterarSenha", e);
+            registrarErro("changePassword", e);
             return false;
         }
     }
 
-    /** exclusão de conta sem afetar o histórico de compras, de acordo com a lgpd
-     *  o perfil é marcado como inativo e os dados pessoais são anonimizados:
-     *  nome vira Usuário excluído
-     *  login e email ambos viram excluido#ID
-     *  o endereço é apagado
-     *  a senha vira um valor aleatório */
-
-    public boolean excluir(int id) {
+    /** this method is responsible for deleting a user account, according to best practices and respecting LGPD
+     * the profile is flagged as inactive and personal data is anonymized */
+    public boolean deleteUser(int id) {
         String sql = "UPDATE usuario SET ativo = FALSE, nome = 'Usuário excluído', "
                    + "login = 'excluido#' || id, email = 'excluido#' || id, "
                    + "endereco = NULL, senha = ? "
@@ -102,21 +99,19 @@ public class UsuarioDAO {
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, UUID.randomUUID().toString());
+            stmt.setString(1, Senha.generateHash(UUID.randomUUID().toString()));
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            registrarErro("excluir", e);
+            registrarErro("deleteUser", e);
             return false;
         }
     }
 
-    /**
-     * retorna o usuário com o id informado ou null se não existir.
-     * aqui, as contas inativas continuam aparecendo manter o histórico de vendas. */
-
-    public Usuario buscarPorId(int id) {
+    /** returns the user that matches the id, otherwise returns null
+     * inactive or deleted accounts still show up */
+    public Usuario searchUserId(int id) {
         String sql = "SELECT " + COLUNAS + " FROM usuario WHERE id = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -128,13 +123,13 @@ public class UsuarioDAO {
             }
 
         } catch (SQLException e) {
-            registrarErro("buscarPorId", e);
+            registrarErro("searchUserId", e);
             return null;
         }
     }
 
-    /** retorna o usuário ativo com o login informado ou null se não existir. */
-    public Usuario buscarPorLogin(String login) {
+    /** returns the user that matches the login (only active users) */
+    public Usuario searchUserLogin(String login) {
         String sql = "SELECT " + COLUNAS + " FROM usuario WHERE login = ? AND ativo";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -146,24 +141,21 @@ public class UsuarioDAO {
             }
 
         } catch (SQLException e) {
-            registrarErro("buscarPorLogin", e);
+            registrarErro("searchUserLogin", e);
             return null;
         }
     }
 
-    /** autentica o usuário com login e senha corretos e conta ativa, ou null caso contrário. */
-    // quando for implementar hash nas senhas, trocar a comparação por Bcrypt.checkpw(senha, usuario.getSenha())
-
-    public Usuario autenticar(String login, String senha) {
-        Usuario usuario = buscarPorLogin(login);
-        if (usuario != null && usuario.isAtivo() && usuario.getSenha().equals(senha)) {
+    /** logs in/authenticates the user whose login information is correct and has an active account, otherwise returns null */
+    public Usuario authenticate(String login, String senha) {
+        Usuario usuario = searchUserLogin(login);
+        if (usuario != null && usuario.isAtivo() && Senha.match(senha, usuario.getSenha())) {
             return usuario;
         }
         return null;
     }
 
-    /** retorna todos os usuários ativos em ordem alfabética, por nome. */
-
+    /** lists all active users, by name (alphabetical order) */
     public List<Usuario> listar() {
         String sql = "SELECT " + COLUNAS + " FROM usuario WHERE ativo ORDER BY nome";
         List<Usuario> usuarios = new ArrayList<>();
@@ -182,32 +174,27 @@ public class UsuarioDAO {
         return usuarios;
     }
 
-    /** verifica se o login já está em uso (cadastro) */
-
+    /** during user creation, checks if a username is already in use */
     public boolean existeLogin(String login) {
-        return existeLogin(login, 0);   // os ids começam em 1, então 0 não ignora ninguém
+        return existeLogin(login, 0);
     }
 
-    /** verifica se o login está em uso por outro usuário (edição de perfil) */
-
+    /** during profile edit, checks if a username is already in use */
     public boolean existeLogin(String login, int idIgnorado) {
         return existe("SELECT 1 FROM usuario WHERE login = ? AND id <> ?", login, idIgnorado);
     }
 
-    /** verifica se o e-mail já está em uso (cadastro). */
-
+    /** during user creation, checks if an email is already in use */
     public boolean existeEmail(String email) {
         return existeEmail(email, 0);
     }
 
-    /** verifica se o e-mail está em uso por outro usuário (edição de perfil). */
-
+    /** during profile edit, checks if an email is already in use */
     public boolean existeEmail(String email, int idIgnorado) {
         return existe("SELECT 1 FROM usuario WHERE email = ? AND id <> ?", email, idIgnorado);
     }
 
-    // Executa uma consulta "SELECT 1 ... WHERE campo = ? AND id <> ?" e diz se encontrou algum registro
-
+    /** does an sql search for user data */
     private boolean existe(String sql, String valor, int idIgnorado) {
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -225,7 +212,6 @@ public class UsuarioDAO {
     }
 
     // Converte a linha atual do ResultSet em um objeto Usuario
-
     private Usuario mapear(ResultSet rs) throws SQLException {
         return new Usuario(
                 rs.getInt("id"),

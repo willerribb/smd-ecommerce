@@ -57,7 +57,7 @@ public class CadastroClienteServlet extends HttpServlet {
 
         Usuario novoCliente = new Usuario(nome, login, senha, email, endereco, false);
 
-        if (erro == null && !usuarioDAO.inserir(novoCliente)) {
+        if (erro == null && !usuarioDAO.insert(novoCliente)) {
             erro = "Não foi possível concluir o cadastro agora. Tente novamente em alguns minutos.";
         }
 
