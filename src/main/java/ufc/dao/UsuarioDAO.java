@@ -111,7 +111,7 @@ public class UsuarioDAO {
 
     /** returns the user that matches the id, otherwise returns null
      * inactive or deleted accounts still show up */
-    public Usuario searchUserId(int id) {
+    public Usuario findById(int id) {
         String sql = "SELECT " + COLUNAS + " FROM usuario WHERE id = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -129,7 +129,7 @@ public class UsuarioDAO {
     }
 
     /** returns the user that matches the login (only active users) */
-    public Usuario searchUserLogin(String login) {
+    public Usuario findByLogin(String login) {
         String sql = "SELECT " + COLUNAS + " FROM usuario WHERE login = ? AND ativo";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -148,7 +148,7 @@ public class UsuarioDAO {
 
     /** logs in/authenticates the user whose login information is correct and has an active account, otherwise returns null */
     public Usuario authenticate(String login, String senha) {
-        Usuario usuario = searchUserLogin(login);
+        Usuario usuario = findByLogin(login);
         if (usuario != null && usuario.isAtivo() && Senha.match(senha, usuario.getSenha())) {
             return usuario;
         }

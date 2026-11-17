@@ -1,5 +1,6 @@
 package ufc.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 /** rules for user creation and profile editing.
@@ -10,6 +11,7 @@ public final class ValidadorUsuario {
     private static final Pattern FORMATO_LOGIN = Pattern.compile("[A-Za-z0-9._-]{6,50}");
     private static final Pattern FORMATO_EMAIL = Pattern.compile("[^@\\s]+@[^@\\s]+\\.[^@\\s]+");
     public static final int TAMANHO_MINIMO_SENHA = 6;
+    public static final int TAMANHO_MAXIMO_SENHA_BYTES = 72; // pelo visto o bcrypt só lê os primeiros 72 bytes
 
     private ValidadorUsuario() {
     }
@@ -39,6 +41,9 @@ public final class ValidadorUsuario {
         }
         if (senha.length() < TAMANHO_MINIMO_SENHA) {
             return "A senha deve ter pelo menos " + TAMANHO_MINIMO_SENHA + " caracteres.";
+        }
+        if (senha.getBytes(StandardCharsets.UTF_8).length > TAMANHO_MAXIMO_SENHA_BYTES) {
+            return "A senha é longa demais. Tente novamente.";
         }
         if (!senha.equals(confirmacao)) {
             return "As senhas digitadas não são iguais.";
