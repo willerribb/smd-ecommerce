@@ -11,6 +11,7 @@ public class Produto {
     private int quantidade;     // quantidade em estoque
     private String foto;        // caminho ou URL da imagem
     private Categoria categoria;
+    private boolean ativo = true;
 
     public Produto() {
     }
@@ -84,6 +85,14 @@ public class Produto {
         this.categoria = categoria;
     }
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
     public boolean temEstoque(int quantidadePedida) {
         return quantidadePedida > 0 && quantidade >= quantidadePedida;
     }
@@ -112,6 +121,6 @@ public class Produto {
     public String toString() {
         return "Produto{id=" + id + ", descricao='" + descricao + "', preco=" + preco
                 + ", quantidade=" + quantidade + ", categoria="
-                + (categoria != null ? categoria.getNome() : "nenhuma") + "}";
+                + (categoria != null ? categoria.getNome() : "nenhuma") + ", ativo=" + ativo + "}";
     }
 }

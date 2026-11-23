@@ -25,7 +25,7 @@ public final class ValidadorUsuario {
             return "O nome deve ter até 150 caracteres e o endereço até 255.";
         }
         if (!FORMATO_LOGIN.matcher(login).matches()) {
-            return "O login deve ter de 6 a 50 caracteres, usando apenas letras, números, "
+            return "O nome de usuário deve ter de 6 a 50 caracteres, usando apenas letras, números, "
                  + "ponto, hífen ou sublinhado.";
         }
         if (email.length() > 150 || !FORMATO_EMAIL.matcher(email).matches()) {

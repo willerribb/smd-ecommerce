@@ -1,6 +1,6 @@
 package ufc.servlet;
 
-import ufc.dao.ProdutoDAO;
+import ufc.util.Sessao;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,16 +9,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
+/**
+ * Raiz do site: a página de entrada (login e cadastro).
+ * Quem já entrou não precisa dela e vai direto para a loja.
+ */
 @WebServlet("")
 public class HomeServlet extends HttpServlet {
-
-    private final ProdutoDAO produtoDAO = new ProdutoDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("produtos", produtoDAO.listarDisponiveis());
-        request.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(request, response);
+
+        if (Sessao.getUsuarioLogado(request) != null) {
+            response.sendRedirect(request.getContextPath() + "/loja");
+            return;
+        }
+        request.getRequestDispatcher("/WEB-INF/views/entrada.jsp").forward(request, response);
     }
 }

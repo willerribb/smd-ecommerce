@@ -40,7 +40,7 @@ public class AtualizarDadosServlet extends HttpServlet {
 
         String erro = ValidadorUsuario.validarDados(nome, login, email, endereco);
         if (erro == null && usuarioDAO.existeLogin(login, logado.getId())) {
-            erro = "Esse login já está em uso. Escolha outro.";
+            erro = "Esse nome de usuário já está em uso. Escolha outro.";
         }
         if (erro == null && usuarioDAO.existeEmail(email, logado.getId())) {
             erro = "Esse e-mail já está em uso por outra conta.";

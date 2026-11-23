@@ -1,0 +1,15 @@
+<%@ page pageEncoding="UTF-8" %>
+<%--
+    Botão de mostrar e ocultar senha (seção 5 do app.js). Vai dentro de um
+    .input-group, logo depois do campo. Antes do include, a página diz qual é o campo:
+      <c:set var="campoSenha" value="idDoCampo"/>
+
+    O aria-pressed informa ao leitor de tela se a senha está visível ("Mostrar senha,
+    pressionado"), e o iuve.css usa o mesmo atributo para trocar o ícone.
+    Os ícones vêm do Font Awesome (kit carregado no head.jspf).
+--%>
+<button type="button" class="btn btn-outline-secondary border-0 btn-senha"
+        data-mostrar-senha="${campoSenha}" aria-label="Mostrar senha" aria-pressed="false">
+    <i class="fa fa-eye fa-fw icone-mostrar" aria-hidden="true"></i>
+    <i class="fa fa-eye-slash fa-fw icone-ocultar" aria-hidden="true"></i>
+</button>

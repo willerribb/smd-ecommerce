@@ -15,6 +15,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Login pelo formulário da página de entrada ou pelo dropdown "Entrar" da navbar
+ * (os dois usam o form-login.jspf).
+ *
+ *   GET   logado: vai para a loja; visitante: página de entrada no painel de login
+ *   POST  sucesso: vai para o destino; erro: página de entrada no painel de login,
+ *         com a mensagem, o nome de usuário preenchido e o destino guardado
+ */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
@@ -23,9 +31,11 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (Sessao.getUsuarioLogado(request) == null) {
-            Sessao.abrirModal(request, "login", null, null, null);
+        if (Sessao.getUsuarioLogado(request) != null) {
+            response.sendRedirect(request.getContextPath() + "/loja");
+            return;
         }
+        Sessao.abrirPainel(request, "login", null, null, null);
         response.sendRedirect(request.getContextPath() + "/");
     }
 
@@ -37,7 +47,6 @@ public class LoginServlet extends HttpServlet {
 
         String login = ValidadorUsuario.limpar(request.getParameter("login"));
         String senha = request.getParameter("senha");
-        String origem = Navegacao.destinoSeguro(request, request.getParameter("origem"));
         String destino = Navegacao.destinoSeguro(request, request.getParameter("destino"));
 
         Usuario usuario = null;
@@ -46,11 +55,14 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (usuario == null) {
+            // O erro sempre volta para a página de entrada, mesmo quando o login
+            // foi tentado pelo dropdown da navbar; o destino vai junto, para a
+            // pessoa voltar à página onde estava depois de acertar.
             Map<String, String> valores = new HashMap<>();
             valores.put("login", login);
             valores.put("destino", destino);
-            Sessao.abrirModal(request, "login", "danger", "Login ou senha incorretos.", valores);
-            response.sendRedirect(origem);
+            Sessao.abrirPainel(request, "login", "danger", "Nome de usuário ou senha incorretos.", valores);
+            response.sendRedirect(request.getContextPath() + "/");
             return;
         }
 

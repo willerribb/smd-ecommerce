@@ -35,11 +35,17 @@ public class AutenticacaoFilter implements Filter {
 
         Usuario usuario = Sessao.getUsuarioLogado(request);
         if (usuario == null) {
+            // Guarda o endereço pedido (com a query string, como ?editar=3) para
+            // voltar a ele depois do login. Num POST não dá para repetir o envio,
+            // então o destino passa a ser o perfil.
+            String destino = request.getContextPath() + "/minha-conta";
+            if ("GET".equals(request.getMethod())) {
+                String consulta = request.getQueryString();
+                destino = request.getRequestURI() + (consulta != null ? "?" + consulta : "");
+            }
             Map<String, String> valores = new HashMap<>();
-            valores.put("destino", "GET".equals(request.getMethod())
-                    ? request.getRequestURI()
-                    : request.getContextPath() + "/minha-conta");
-            Sessao.abrirModal(request, "login", "warning", "Entre na sua conta para continuar.", valores);
+            valores.put("destino", destino);
+            Sessao.abrirPainel(request, "login", "warning", "Entre na sua conta para continuar.", valores);
             response.sendRedirect(request.getContextPath() + "/");
             return;
         }

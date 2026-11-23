@@ -119,7 +119,7 @@ h1, h2, h3, h4, h5, h6,
 
 .btn-senha {
     --bs-btn-color: var(--iuve-roxo-apoio);
-    --bs-btn-border-color: none;
+    --bs-btn-border-color: transparent;
     --bs-btn-hover-color: var(--iuve-roxo-escuro);
     --bs-btn-hover-bg: var(--iuve-cinza-claro);
     --bs-btn-hover-border-color: var(--iuve-borda-campo);
@@ -132,4 +132,10 @@ h1, h2, h3, h4, h5, h6,
 .btn-senha[aria-pressed="false"] .icone-ocultar,
 .btn-senha[aria-pressed="true"] .icone-mostrar {
     display: none;
+}
+
+/* Dropdown "Entrar" da navbar: largura do formulário de login, sem passar da tela no celular */
+.dropdown-entrar .dropdown-menu {
+    width: 20rem;
+    max-width: calc(100vw - 2rem);
 }

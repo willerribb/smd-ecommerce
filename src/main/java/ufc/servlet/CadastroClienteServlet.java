@@ -15,6 +15,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Cadastro de cliente.
+ *
+ *   GET   logado: vai para a loja; visitante: página de entrada no painel de
+ *         cadastro. Aceita ?destino=, enviado pelo "Criar conta" do dropdown.
+ *   POST  sucesso: cria o cliente (admin sempre false), entra na conta e vai
+ *         para o destino; erro: painel de cadastro com a mensagem e os campos
+ *         preenchidos de novo (exceto as senhas)
+ */
 @WebServlet("/cadastro")
 public class CadastroClienteServlet extends HttpServlet {
 
@@ -23,9 +32,17 @@ public class CadastroClienteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (Sessao.getUsuarioLogado(request) == null) {
-            Sessao.abrirModal(request, "cadastro", null, null, null);
+        if (Sessao.getUsuarioLogado(request) != null) {
+            response.sendRedirect(request.getContextPath() + "/loja");
+            return;
         }
+
+        Map<String, String> valores = new HashMap<>();
+        String destino = request.getParameter("destino");
+        if (destino != null) {
+            valores.put("destino", Navegacao.destinoSeguro(request, destino));
+        }
+        Sessao.abrirPainel(request, "cadastro", null, null, valores);
         response.sendRedirect(request.getContextPath() + "/");
     }
 
@@ -41,7 +58,6 @@ public class CadastroClienteServlet extends HttpServlet {
         String endereco = ValidadorUsuario.limpar(request.getParameter("endereco"));
         String senha = request.getParameter("senha");                 // senha não leva trim
         String confirmacao = request.getParameter("confirmacaoSenha");
-        String origem = Navegacao.destinoSeguro(request, request.getParameter("origem"));
         String destino = Navegacao.destinoSeguro(request, request.getParameter("destino"));
 
         String erro = ValidadorUsuario.validarDados(nome, login, email, endereco);
@@ -49,10 +65,10 @@ public class CadastroClienteServlet extends HttpServlet {
             erro = ValidadorUsuario.validarNovaSenha(senha, confirmacao);
         }
         if (erro == null && usuarioDAO.existeLogin(login)) {
-            erro = "Esse login já está em uso. Escolha outro.";
+            erro = "Esse nome de usuário já está em uso. Escolha outro.";
         }
         if (erro == null && usuarioDAO.existeEmail(email)) {
-            erro = "Já existe uma conta com esse e-mail. Se for sua, entre com seu login.";
+            erro = "Já existe uma conta com esse e-mail. Se for sua, entre com seu nome de usuário.";
         }
 
         Usuario novoCliente = new Usuario(nome, login, senha, email, endereco, false);
@@ -68,11 +84,12 @@ public class CadastroClienteServlet extends HttpServlet {
             valores.put("endereco", endereco);
             valores.put("login", login);
             valores.put("destino", destino);
-            Sessao.abrirModal(request, "cadastro", "danger", erro, valores);
-            response.sendRedirect(origem);
+            Sessao.abrirPainel(request, "cadastro", "danger", erro, valores);
+            response.sendRedirect(request.getContextPath() + "/");
             return;
         }
 
+        // Único caso de login automático na plataforma
         Sessao.iniciar(request, novoCliente);
         Sessao.definirMensagem(request, "success",
                 "Conta criada! Boas-vindas, " + novoCliente.getPrimeiroNome() + ".");

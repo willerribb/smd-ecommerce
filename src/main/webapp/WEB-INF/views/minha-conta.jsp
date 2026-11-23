@@ -20,11 +20,17 @@
 
             <%@ include file="/WEB-INF/views/fragmentos/mensagens.jspf" %>
 
-            <%--
-                <c:if test="${usuario.admin}">
-                    ... gerenciar produtos, categorias, vendas ...
-                </c:if>
-            --%>
+            <c:if test="${usuario.admin}">
+                <section class="card mb-4" aria-labelledby="tituloAdmin">
+                    <div class="card-body p-4">
+                        <h2 id="tituloAdmin" class="h5 mb-3">Administração</h2>
+                        <div class="list-group">
+                            <a href="${raiz}/admin/categorias" class="list-group-item list-group-item-action">Categorias</a>
+                            <span class="list-group-item text-body-secondary" aria-disabled="true">Produtos (em breve)</span>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
 
             <section class="card mb-4">
                 <div class="card-body p-4">
@@ -55,11 +61,11 @@
                             <div class="invalid-feedback">Informe seu endereço.</div>
                         </div>
                         <div class="mb-4">
-                            <label for="login" class="form-label">Login</label>
+                            <label for="login" class="form-label">Nome de usuário</label>
                             <input type="text" class="form-control" id="login" name="login"
                                    value="<c:out value='${editandoDados ? param.login : usuario.login}'/>"
                                    minlength="6" maxlength="50" pattern="[A-Za-z0-9._\-]{6,50}"
-                                   autocomplete="username" required>
+                                   autocomplete="username" autocapitalize="none" spellcheck="false" required>
                             <div class="invalid-feedback">Use de 6 a 50 caracteres, entre letras, números, ponto, hífen ou sublinhado.</div>
                         </div>
                         <button type="submit" class="btn btn-primary">Salvar alterações</button>
@@ -76,16 +82,24 @@
                     <form action="${raiz}/minha-conta/senha" method="post" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="senhaAtual" class="form-label">Senha atual</label>
-                            <input type="password" class="form-control" id="senhaAtual" name="senhaAtual"
-                                   autocomplete="current-password" required>
-                            <div class="invalid-feedback">Informe sua senha atual.</div>
+                            <div class="input-group has-validation">
+                                <input type="password" class="form-control" id="senhaAtual" name="senhaAtual"
+                                       autocomplete="current-password" required>
+                                <c:set var="campoSenha" value="senhaAtual"/>
+                                <%@ include file="/WEB-INF/views/fragmentos/botao-senha.jspf" %>
+                                <div class="invalid-feedback">Informe sua senha atual.</div>
+                            </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-sm-6">
                                 <label for="novaSenha" class="form-label">Nova senha</label>
-                                <input type="password" class="form-control" id="novaSenha" name="novaSenha"
-                                       minlength="6" autocomplete="new-password" required>
-                                <div class="invalid-feedback">Use pelo menos 6 caracteres.</div>
+                                <div class="input-group has-validation">
+                                    <input type="password" class="form-control" id="novaSenha" name="novaSenha"
+                                           minlength="6" maxlength="72" autocomplete="new-password" required>
+                                    <c:set var="campoSenha" value="novaSenha"/>
+                                    <%@ include file="/WEB-INF/views/fragmentos/botao-senha.jspf" %>
+                                    <div class="invalid-feedback">Use pelo menos 6 caracteres.</div>
+                                </div>
                             </div>
                             <div class="col-sm-6">
                                 <label for="confirmacaoSenha" class="form-label">Confirme a nova senha</label>
@@ -129,9 +143,13 @@
             <div class="modal-body">
                 <p>Essa ação não pode ser desfeita. Para confirmar, digite sua senha.</p>
                 <label for="senhaExclusao" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="senhaExclusao" name="senha"
-                       autocomplete="current-password" required>
-                <div class="invalid-feedback">Digite sua senha para confirmar.</div>
+                <div class="input-group has-validation">
+                    <input type="password" class="form-control" id="senhaExclusao" name="senha"
+                           autocomplete="current-password" required>
+                    <c:set var="campoSenha" value="senhaExclusao"/>
+                    <%@ include file="/WEB-INF/views/fragmentos/botao-senha.jspf" %>
+                    <div class="invalid-feedback">Digite sua senha para confirmar.</div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>

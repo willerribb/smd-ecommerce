@@ -28,7 +28,7 @@ public class ProdutoDAO {
                    + "       c.id AS categoria_id, c.nome AS categoria_nome "
                    + "FROM produto p "
                    + "JOIN categoria c ON c.id = p.categoria_id "
-                   + "WHERE p.quantidade > 0 "
+                   + "WHERE p.ativo AND p.quantidade > 0 "
                    + "ORDER BY p.descricao";
         List<Produto> produtos = new ArrayList<>();
 

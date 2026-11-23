@@ -14,10 +14,11 @@ public final class Sessao {
     public static final String MENSAGEM = "mensagem";
     public static final String TIPO_MENSAGEM = "tipoMensagem";
 
-    public static final String MODAL = "modal";
-    public static final String MENSAGEM_MODAL = "mensagemModal";
-    public static final String TIPO_MENSAGEM_MODAL = "tipoMensagemModal";
-    public static final String VALORES_MODAL = "valoresModal";
+    // Pedido para a página de entrada (ver abrirPainel)
+    public static final String PAINEL = "painel";
+    public static final String MENSAGEM_PAINEL = "mensagemPainel";
+    public static final String TIPO_MENSAGEM_PAINEL = "tipoMensagemPainel";
+    public static final String VALORES_PAINEL = "valoresPainel";
 
     private static final int TEMPO_LIMITE_MINUTOS = 30;
 
@@ -58,12 +59,26 @@ public final class Sessao {
         sessao.setAttribute(MENSAGEM, texto);
     }
 
-    public static void abrirModal(HttpServletRequest request, String modal, String tipo,
-                                  String mensagem, Map<String, String> valores) {
+    /**
+     * Deixa um pedido para a página de entrada, que é lido pelo entrada.jsp
+     * depois do redirecionamento para a raiz (e removido por ele no fim,
+     * para valer uma única vez).
+     *
+     *   painel    "login" ou "cadastro": qual dos dois painéis aparece aberto
+     *   tipo      tipo do alerta do Bootstrap ("danger", "warning"...); pode ser null
+     *   mensagem  texto do alerta, exibido dentro do painel; pode ser null
+     *   valores   campos para preencher de novo (nunca senhas) e o "destino",
+     *             para onde o usuário vai depois de entrar; pode ser null
+     *
+     * Usado pelo LoginServlet e pelo CadastroClienteServlet quando algo dá errado,
+     * e pelo AutenticacaoFilter quando alguém abre uma área restrita sem login.
+     */
+    public static void abrirPainel(HttpServletRequest request, String painel, String tipo,
+                                   String mensagem, Map<String, String> valores) {
         HttpSession sessao = request.getSession(true);
-        sessao.setAttribute(MODAL, modal);
-        sessao.setAttribute(TIPO_MENSAGEM_MODAL, tipo);
-        sessao.setAttribute(MENSAGEM_MODAL, mensagem);
-        sessao.setAttribute(VALORES_MODAL, valores != null ? valores : new HashMap<String, String>());
+        sessao.setAttribute(PAINEL, painel);
+        sessao.setAttribute(TIPO_MENSAGEM_PAINEL, tipo);
+        sessao.setAttribute(MENSAGEM_PAINEL, mensagem);
+        sessao.setAttribute(VALORES_PAINEL, valores != null ? valores : new HashMap<String, String>());
     }
 }
