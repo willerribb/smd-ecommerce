@@ -2,10 +2,11 @@
 <%--
     Barra de navegação comum a todas as páginas (menos a de entrada).
     A página precisa ter declarado a taglib "c" e a variável "raiz".
-    Opcional: <c:set var="menuAtivo" value="loja"/> destaca o link Loja.
+    Opcional: <c:set var="menuAtivo" value="loja"/> destaca o link Loja
+    ("produtos" e "categorias" destacam os links do administrador).
 
     Visitante: dropdown "Entrar" com o formulário de login, para entrar sem sair
-    da página. Logado: menu com o nome, Editar perfil e Sair.
+    da página. Logado: menu com o nome, Minha conta e Sair.
 --%>
 <c:set var="usuarioNav" value="${sessionScope.usuarioLogado}"/>
 
@@ -25,8 +26,17 @@
                     <a class="nav-link ${menuAtivo == 'loja' ? 'active' : ''}" href="${raiz}/loja"
                        ${menuAtivo == 'loja' ? 'aria-current="page"' : ''}>Loja</a>
                 </li>
-                <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Produtos</a></li>
-                <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Categorias</a></li>
+                <%-- Gerência: só para administradores (o AutenticacaoFilter protege as páginas de qualquer jeito) --%>
+                <c:if test="${usuarioNav.admin}">
+                    <li class="nav-item">
+                        <a class="nav-link ${menuAtivo == 'produtos' ? 'active' : ''}" href="${raiz}/admin/produtos"
+                           ${menuAtivo == 'produtos' ? 'aria-current="page"' : ''}>Produtos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link ${menuAtivo == 'categorias' ? 'active' : ''}" href="${raiz}/admin/categorias"
+                           ${menuAtivo == 'categorias' ? 'aria-current="page"' : ''}>Categorias</a>
+                    </li>
+                </c:if>
             </ul>
 
             <c:choose>
@@ -47,7 +57,7 @@
                             </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="${raiz}/minha-conta">Editar perfil</a></li>
+                            <li><a class="dropdown-item" href="${raiz}/minha-conta">Minha conta</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="${raiz}/logout" method="post" class="m-0">

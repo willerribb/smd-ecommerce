@@ -111,7 +111,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="passwordSignup" class="form-label">Senha</label>
-                        <div class="input-group has-validation">
+                        <div class="campo-senha">
                             <input type="password" class="form-control" id="passwordSignup" name="senha"
                                    minlength="6" maxlength="72" autocomplete="new-password" required>
                             <c:set var="campoSenha" value="passwordSignup"/>

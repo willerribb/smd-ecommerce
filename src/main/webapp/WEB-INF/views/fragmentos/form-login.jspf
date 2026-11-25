@@ -23,8 +23,8 @@
     </div>
     <div class="mb-4">
         <label for="loginPassword" class="form-label">Senha</label>
-        <div class="input-group has-validation">
-            <input type="password" class="form-control pw-input" id="loginPassword" name="senha"
+        <div class="campo-senha">
+            <input type="password" class="form-control" id="loginPassword" name="senha"
                    autocomplete="current-password" required>
             <c:set var="campoSenha" value="loginPassword"/>
             <%@ include file="/WEB-INF/views/fragmentos/botao-senha.jspf" %>

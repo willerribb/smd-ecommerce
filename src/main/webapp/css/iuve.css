@@ -115,17 +115,54 @@ h1, h2, h3, h4, h5, h6,
     max-width: 25rem;
 }
 
-.pw-input { padding-right: 2.75rem; }
+/*
+ * Campo de senha com o botão de mostrar dentro dele, na ponta direita.
+ * HTML: <div class="campo-senha"> campo, botão (botao-senha.jspf), invalid-feedback </div>
+ */
+.campo-senha {
+    position: relative;
+}
 
+.campo-senha > .form-control {
+    /*
+     * Espaço para o botão não cobrir o texto. O !important é necessário porque as
+     * regras de validação do Bootstrap (.was-validated .form-control:invalid) também
+     * mudam o padding e o fundo, e têm prioridade maior que esta regra.
+     */
+    padding-right: 2.75rem !important;
+    /* sem o ícone de válido e inválido: ele ocuparia o mesmo canto do botão.
+       O estado continua visível pela cor da borda e pela mensagem abaixo do campo. */
+    background-image: none !important;
+}
+
+/* O Edge tem um olho próprio nos campos de senha; sem isto, apareceriam dois */
+.campo-senha > .form-control::-ms-reveal {
+    display: none;
+}
+
+.campo-senha > .btn-senha {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 5;                     /* acima do campo, mesmo quando ele está em foco */
+    display: flex;
+    align-items: center;
+    /* mesma altura do .form-control: linha de texto + padding + bordas */
+    height: calc(1.5rem + 0.75rem + 2 * var(--bs-border-width));
+    padding: 0 0.75rem;
+}
+
+/* Botão de mostrar senha: só o ícone muda de cor; o fundo fica o do campo */
 .btn-senha {
     --bs-btn-color: var(--iuve-roxo-apoio);
+    --bs-btn-bg: transparent;
     --bs-btn-border-color: transparent;
     --bs-btn-hover-color: var(--iuve-roxo-escuro);
-    --bs-btn-hover-bg: var(--iuve-cinza-claro);
-    --bs-btn-hover-border-color: var(--iuve-borda-campo);
-    --bs-btn-active-color: var(--iuve-roxo-escuro);
-    --bs-btn-active-bg: var(--iuve-cinza-claro);
-    --bs-btn-active-border-color: var(--iuve-borda-campo);
+    --bs-btn-hover-bg: transparent;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-color: var(--iuve-magenta);
+    --bs-btn-active-bg: transparent;
+    --bs-btn-active-border-color: transparent;
     --bs-btn-focus-shadow-rgb: 153, 20, 100;
 }
 
@@ -138,4 +175,51 @@ h1, h2, h3, h4, h5, h6,
 .dropdown-entrar .dropdown-menu {
     width: 20rem;
     max-width: calc(100vw - 2rem);
+}
+
+/* Vitrine: cards de produto. Os azuis da paleta ficam reservados para ela. */
+.produto-foto {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.produto-sem-foto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--iuve-cinza-claro);
+    color: var(--iuve-roxo-apoio);
+    font-size: 2.5rem;
+}
+
+.produto-categoria {
+    color: var(--iuve-azul-suave);      /* contraste 6,2:1 com o branco */
+}
+
+.produto-preco {
+    color: var(--iuve-azul-medio);      /* contraste 11,3:1 com o branco */
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Administração: miniaturas das fotos na lista e no formulário de produtos */
+.miniatura {
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius);
+}
+
+.miniatura-grande {
+    width: 6rem;
+    height: 6rem;
+}
+
+.miniatura-vazia {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--iuve-cinza-claro);
+    color: var(--iuve-roxo-apoio);
 }

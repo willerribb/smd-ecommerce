@@ -16,13 +16,6 @@ import java.util.List;
  */
 public class CategoriaDAO {
 
-    /**
-     * SQLState que o PostgreSQL devolve quando uma chave estrangeira impede
-     * a operação. Aqui: apagar uma categoria que ainda tem produtos
-     * (produto.categoria_id tem ON DELETE RESTRICT).
-     */
-    private static final String VIOLACAO_CHAVE_ESTRANGEIRA = "23503";
-
     /** lists all categories in alphabetical order */
     public List<Categoria> listar() {
         String sql = "SELECT id, nome FROM categoria ORDER BY nome";
@@ -118,7 +111,7 @@ public class CategoriaDAO {
             return stmt.executeUpdate() > 0 ? ResultadoExclusao.EXCLUIDO : ResultadoExclusao.FALHOU;
 
         } catch (SQLException e) {
-            if (VIOLACAO_CHAVE_ESTRANGEIRA.equals(e.getSQLState())) {
+            if (ErrosBanco.registroEmUso(e)) {
                 return ResultadoExclusao.EM_USO;   // não é erro do sistema, é regra de negócio
             }
             registrarErro("delete", e);

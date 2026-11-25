@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="raiz" value="${pageContext.request.contextPath}"/>
 <c:set var="titulo" value="Categorias"/>
+<c:set var="menuAtivo" value="categorias"/>
 <%--
     categoriaEditada vem do servlet em dois casos:
       ?editar=ID              a categoria do banco (id > 0)

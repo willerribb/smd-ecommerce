@@ -1,9 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="raiz" value="${pageContext.request.contextPath}"/>
-<c:set var="titulo" value="Editar perfil"/>
+<c:set var="titulo" value="Minha conta"/>
 <c:set var="usuario" value="${sessionScope.usuarioLogado}"/>
 <c:set var="editandoDados" value="${secao == 'dados'}"/>
+<%--
+    campoErro vem do AtualizarDadosServlet quando o erro é de um campo só ("login" ou
+    "email"): o campo fica vermelho, com a mensagem logo abaixo dele, e recebe o foco.
+    data-erro-servidor: o app.js tira o vermelho assim que a pessoa começa a corrigir e
+    devolve à mensagem o texto de data-mensagem-padrao (o erro de formato do campo).
+--%>
+<c:set var="erroNoLogin" value="${editandoDados and campoErro == 'login'}"/>
+<c:set var="erroNoEmail" value="${editandoDados and campoErro == 'email'}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -16,7 +24,7 @@
 <main class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <h1 class="h3 mb-4">Editar perfil</h1>
+            <h1 class="h3 mb-4">Minha conta</h1>
 
             <%@ include file="/WEB-INF/views/fragmentos/mensagens.jspf" %>
 
@@ -26,7 +34,7 @@
                         <h2 id="tituloAdmin" class="h5 mb-3">Administração</h2>
                         <div class="list-group">
                             <a href="${raiz}/admin/categorias" class="list-group-item list-group-item-action">Categorias</a>
-                            <span class="list-group-item text-body-secondary" aria-disabled="true">Produtos (em breve)</span>
+                            <a href="${raiz}/admin/produtos" class="list-group-item list-group-item-action">Produtos</a>
                         </div>
                     </div>
                 </section>
@@ -35,7 +43,8 @@
             <section class="card mb-4">
                 <div class="card-body p-4">
                     <h2 class="h5 mb-3">Dados pessoais</h2>
-                    <c:if test="${editandoDados}">
+                    <%-- Erro de um campo só aparece junto do campo; os outros, aqui no alto --%>
+                    <c:if test="${editandoDados and empty campoErro}">
                         <div class="alert alert-danger" role="alert"><c:out value="${erro}"/></div>
                     </c:if>
                     <form action="${raiz}/minha-conta/dados" method="post" class="needs-validation" novalidate>
@@ -48,10 +57,13 @@
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">E-mail</label>
-                            <input type="email" class="form-control" id="email" name="email"
+                            <input type="email" class="form-control ${erroNoEmail ? 'is-invalid' : ''}" id="email" name="email"
                                    value="<c:out value='${editandoDados ? param.email : usuario.email}'/>"
-                                   maxlength="150" autocomplete="email" required>
-                            <div class="invalid-feedback">Informe um e-mail válido.</div>
+                                   maxlength="150" autocomplete="email" required
+                                   ${erroNoEmail ? 'aria-invalid="true" data-erro-servidor autofocus' : ''}>
+                            <div class="invalid-feedback" data-mensagem-padrao="Informe um e-mail válido.">
+                                <c:out value="${erroNoEmail ? erro : 'Informe um e-mail válido.'}"/>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="endereco" class="form-label">Endereço de entrega</label>
@@ -62,11 +74,14 @@
                         </div>
                         <div class="mb-4">
                             <label for="login" class="form-label">Nome de usuário</label>
-                            <input type="text" class="form-control" id="login" name="login"
+                            <input type="text" class="form-control ${erroNoLogin ? 'is-invalid' : ''}" id="login" name="login"
                                    value="<c:out value='${editandoDados ? param.login : usuario.login}'/>"
                                    minlength="6" maxlength="50" pattern="[A-Za-z0-9._\-]{6,50}"
-                                   autocomplete="username" autocapitalize="none" spellcheck="false" required>
-                            <div class="invalid-feedback">Use de 6 a 50 caracteres, entre letras, números, ponto, hífen ou sublinhado.</div>
+                                   autocomplete="username" autocapitalize="none" spellcheck="false" required
+                                   ${erroNoLogin ? 'aria-invalid="true" data-erro-servidor autofocus' : ''}>
+                            <div class="invalid-feedback" data-mensagem-padrao="Use de 6 a 50 caracteres, entre letras, números, ponto, hífen ou sublinhado.">
+                                <c:out value="${erroNoLogin ? erro : 'Use de 6 a 50 caracteres, entre letras, números, ponto, hífen ou sublinhado.'}"/>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Salvar alterações</button>
                     </form>
@@ -82,7 +97,7 @@
                     <form action="${raiz}/minha-conta/senha" method="post" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="senhaAtual" class="form-label">Senha atual</label>
-                            <div class="input-group has-validation">
+                            <div class="campo-senha">
                                 <input type="password" class="form-control" id="senhaAtual" name="senhaAtual"
                                        autocomplete="current-password" required>
                                 <c:set var="campoSenha" value="senhaAtual"/>
@@ -93,7 +108,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-sm-6">
                                 <label for="novaSenha" class="form-label">Nova senha</label>
-                                <div class="input-group has-validation">
+                                <div class="campo-senha">
                                     <input type="password" class="form-control" id="novaSenha" name="novaSenha"
                                            minlength="6" maxlength="72" autocomplete="new-password" required>
                                     <c:set var="campoSenha" value="novaSenha"/>
@@ -119,20 +134,33 @@
                     <c:if test="${secao == 'excluir'}">
                         <div class="alert alert-danger" role="alert"><c:out value="${erro}"/></div>
                     </c:if>
-                    <p class="text-body-secondary mb-3">
-                        Ao excluir sua conta, você perde o acesso a ela e seus dados pessoais são apagados.
-                        Para comprar de novo, será preciso criar uma conta nova.
-                    </p>
-                    <button type="button" class="btn btn-outline-danger"
-                            data-bs-toggle="modal" data-bs-target="#modalExcluir">
-                        Excluir minha conta
-                    </button>
+                    <%-- ultimoAdmin vem do MinhaContaServlet --%>
+                    <c:choose>
+                        <c:when test="${ultimoAdmin}">
+                            <p class="text-body-secondary mb-0">
+                                Sua conta é a única de administrador e não pode ser excluída:
+                                sem ela, ninguém mais gerencia a loja.
+                            </p>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="text-body-secondary mb-3">
+                                Ao excluir sua conta, você perde o acesso a ela e seus dados pessoais são apagados.
+                                Para comprar de novo, será preciso criar uma conta nova.
+                            </p>
+                            <button type="button" class="btn btn-outline-danger"
+                                    data-bs-toggle="modal" data-bs-target="#modalExcluir">
+                                Excluir minha conta
+                            </button>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </section>
         </div>
     </div>
 </main>
 
+<%-- O modal só existe quando o botão que o abre existe --%>
+<c:if test="${not ultimoAdmin}">
 <div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="tituloModalExcluir" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <form class="modal-content needs-validation" action="${raiz}/minha-conta/excluir" method="post" novalidate>
@@ -143,7 +171,7 @@
             <div class="modal-body">
                 <p>Essa ação não pode ser desfeita. Para confirmar, digite sua senha.</p>
                 <label for="senhaExclusao" class="form-label">Senha</label>
-                <div class="input-group has-validation">
+                <div class="campo-senha">
                     <input type="password" class="form-control" id="senhaExclusao" name="senha"
                            autocomplete="current-password" required>
                     <c:set var="campoSenha" value="senhaExclusao"/>
@@ -158,6 +186,7 @@
         </form>
     </div>
 </div>
+</c:if>
 
 <%@ include file="/WEB-INF/views/fragmentos/scripts.jspf" %>
 </body>

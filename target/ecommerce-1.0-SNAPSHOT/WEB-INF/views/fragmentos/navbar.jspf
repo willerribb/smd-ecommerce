@@ -1,13 +1,18 @@
+<%@ page pageEncoding="UTF-8" %>
 <%--
-    Barra de navegação comum a todas as páginas.
+    Barra de navegação comum a todas as páginas (menos a de entrada).
     A página precisa ter declarado a taglib "c" e a variável "raiz".
-    Opcional: <c:set var="menuAtivo" value="home"/> destaca o link Home.
+    Opcional: <c:set var="menuAtivo" value="loja"/> destaca o link Loja
+    ("produtos" e "categorias" destacam os links do administrador).
+
+    Visitante: dropdown "Entrar" com o formulário de login, para entrar sem sair
+    da página. Logado: menu com o nome, Minha conta e Sair.
 --%>
 <c:set var="usuarioNav" value="${sessionScope.usuarioLogado}"/>
 
 <nav class="navbar navbar-expand-lg bg-body border-bottom">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="${raiz}/">IUVe</a>
+        <a class="navbar-brand fw-bold" href="${raiz}/loja">IUVe</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#menuPrincipal" aria-controls="menuPrincipal"
@@ -18,11 +23,20 @@
         <div class="collapse navbar-collapse" id="menuPrincipal">
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link ${menuAtivo == 'home' ? 'active' : ''}" href="${raiz}/"
-                       ${menuAtivo == 'home' ? 'aria-current="page"' : ''}>Home</a>
+                    <a class="nav-link ${menuAtivo == 'loja' ? 'active' : ''}" href="${raiz}/loja"
+                       ${menuAtivo == 'loja' ? 'aria-current="page"' : ''}>Loja</a>
                 </li>
-                <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Produtos</a></li>
-                <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Categorias</a></li>
+                <%-- Gerência: só para administradores (o AutenticacaoFilter protege as páginas de qualquer jeito) --%>
+                <c:if test="${usuarioNav.admin}">
+                    <li class="nav-item">
+                        <a class="nav-link ${menuAtivo == 'produtos' ? 'active' : ''}" href="${raiz}/admin/produtos"
+                           ${menuAtivo == 'produtos' ? 'aria-current="page"' : ''}>Produtos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link ${menuAtivo == 'categorias' ? 'active' : ''}" href="${raiz}/admin/categorias"
+                           ${menuAtivo == 'categorias' ? 'aria-current="page"' : ''}>Categorias</a>
+                    </li>
+                </c:if>
             </ul>
 
             <c:choose>
@@ -43,7 +57,7 @@
                             </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="${raiz}/minha-conta">Editar perfil</a></li>
+                            <li><a class="dropdown-item" href="${raiz}/minha-conta">Minha conta</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="${raiz}/logout" method="post" class="m-0">
@@ -55,14 +69,46 @@
                 </c:when>
 
                 <c:otherwise>
-                    <button type="button" class="btn btn-primary"
-                            data-bs-toggle="modal" data-bs-target="#modalLogin">
-                        Entrar
-                    </button>
+                    <%--
+                        Página atual, para voltar a ela depois de entrar. As JSPs são abertas
+                        por forward, então o requestURI seria o caminho da JSP dentro de
+                        WEB-INF; o endereço que o navegador pediu fica neste atributo.
+                    --%>
+                    <c:set var="destinoLogin" value="${requestScope['javax.servlet.forward.request_uri']}"/>
+                    <c:if test="${not empty requestScope['javax.servlet.forward.query_string']}">
+                        <c:set var="destinoLogin"
+                               value="${destinoLogin}?${requestScope['javax.servlet.forward.query_string']}"/>
+                    </c:if>
+
+                    <%--
+                        data-bs-auto-close="outside": o menu não fecha ao clicar nos campos.
+                        data-bs-display="static" com dropdown-menu-lg-end: no celular o menu
+                        abre alinhado pela esquerda do botão; em telas grandes, pela direita.
+                    --%>
+                    <div class="dropdown dropdown-entrar">
+                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                data-bs-display="static" aria-expanded="false">
+                            Entrar
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg-end p-4">
+                            <%@ include file="/WEB-INF/views/fragmentos/form-login.jspf" %>
+
+                            <%--
+                                "Criar conta" é um formulário GET, e não um link: o navegador monta
+                                e codifica o ?destino= sozinho. Com <c:url>, o Tomcat poderia
+                                acrescentar ;jsessionid=... ao endereço de um visitante sem o
+                                cookie da sessão, expondo o identificador na URL.
+                            --%>
+                            <form action="${raiz}/cadastro" method="get" class="small mt-3 mb-0">
+                                <input type="hidden" name="destino" value="<c:out value='${destinoLogin}'/>">
+                                Ainda não criou uma conta?
+                                <button type="submit" class="btn btn-link p-0 align-baseline">Criar conta</button>
+                            </form>
+                        </div>
+                    </div>
                 </c:otherwise>
             </c:choose>
         </div>
     </div>
 </nav>
-
-<%@ include file="/WEB-INF/views/fragmentos/modais-conta.jspf" %>

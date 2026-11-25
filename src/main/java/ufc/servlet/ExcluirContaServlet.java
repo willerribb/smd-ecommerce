@@ -33,7 +33,11 @@ public class ExcluirContaServlet extends HttpServlet {
         String senha = request.getParameter("senha");
 
         String erro = null;
-        if (ValidadorUsuario.vazio(senha) || usuarioDAO.authenticate(logado.getLogin(), senha) == null) {
+        if (logado.isAdmin() && usuarioDAO.contarAdminsAtivos() <= 1) {
+            // A página já esconde o botão nesse caso; esta conferência vale para
+            // quem enviar o formulário por outro caminho
+            erro = MinhaContaServlet.AVISO_ULTIMO_ADMIN;
+        } else if (ValidadorUsuario.vazio(senha) || usuarioDAO.authenticate(logado.getLogin(), senha) == null) {
             erro = "A senha informada está incorreta. Sua conta não foi excluída.";
         } else if (!usuarioDAO.deleteUser(logado.getId())) {
             erro = "Não foi possível excluir a conta agora. Tente novamente em alguns minutos.";

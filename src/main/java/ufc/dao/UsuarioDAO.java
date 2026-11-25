@@ -174,6 +174,26 @@ public class UsuarioDAO {
         return usuarios;
     }
 
+    /**
+     * Conta os administradores com conta ativa. Usado para impedir que o último
+     * deles exclua a própria conta: como não há cadastro de administradores pelo
+     * site, a loja ficaria sem ninguém para gerenciá-la.
+     */
+    public int contarAdminsAtivos() {
+        String sql = "SELECT COUNT(*) FROM usuario WHERE admin AND ativo";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            return rs.next() ? rs.getInt(1) : 0;
+
+        } catch (SQLException e) {
+            registrarErro("contarAdminsAtivos", e);
+            return 0;   // na dúvida, 0 faz o servlet recusar a exclusão de um admin
+        }
+    }
+
     /** during user creation, checks if a username is already in use */
     public boolean existeLogin(String login) {
         return existeLogin(login, 0);
