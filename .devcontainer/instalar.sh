@@ -21,7 +21,7 @@ sudo service postgresql start > /dev/null
 
 # A mesma senha do db.properties abaixo. O banco só aceita conexões de
 # dentro do Codespace, então uma senha simples não expõe nada.
-sudo -u postgres psql -qc "ALTER USER postgres PASSWORD 'postgres';"
+sudo runuser -u postgres -- psql -qc "ALTER USER postgres PASSWORD 'postgres';"
 
 echo "==> Criando o banco ecommerce_db"
 bash "$RAIZ/.devcontainer/banco.sh" recriar
