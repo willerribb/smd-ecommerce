@@ -1,22 +1,17 @@
 #!/usr/bin/env bash
-# =====================================================================
-# Atalhos para o banco no Codespace:
-#   bash .devcontainer/banco.sh           abre o psql no ecommerce_db (\q para sair)
-#   bash .devcontainer/banco.sh recriar   apaga tudo e recria com o createdb.sql
-#   bash .devcontainer/banco.sh demo      acrescenta os dados de demonstração
-# =====================================================================
+# db shortcuts for the codespace:
+# no argument opens psql (\q to quit), "recriar" runs createdb.sql again, "demo" loads dados-demo.sql
 set -euo pipefail
 
 RAIZ="$(cd "$(dirname "$0")/.." && pwd)"
 export PGPASSWORD="postgres"
-export PGOPTIONS="--client-min-messages=warning"   # esconde os avisos "does not exist, skipping"
+export PGOPTIONS="--client-min-messages=warning" # hides the "does not exist, skipping" notices
 PSQL=(psql -h localhost -U postgres -d ecommerce_db -v ON_ERROR_STOP=1)
 
 case "${1:-}" in
     recriar)
         if ! psql -h localhost -U postgres -tAc "SELECT 1 FROM pg_database WHERE datname = 'ecommerce_db'" | grep -q 1; then
-            # UTF-8 com ordenação em português (ICU): "Ética" vem antes de "Zebra" no ORDER BY.
-            # Se o PostgreSQL não tiver ICU, cria em UTF-8 com a ordenação padrão.
+            # UTF-8 with portuguese sorting (ICU), or the default sorting if ICU isn't available
             createdb -h localhost -U postgres -E UTF8 -T template0 --locale=C.UTF-8 \
                      --locale-provider=icu --icu-locale=pt-BR ecommerce_db 2> /dev/null \
                 || createdb -h localhost -U postgres -E UTF8 -T template0 --locale=C.UTF-8 ecommerce_db

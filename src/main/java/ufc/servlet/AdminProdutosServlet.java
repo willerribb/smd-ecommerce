@@ -19,30 +19,18 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
-/**
- * CRUD de produtos do administrador, no mesmo molde do de categorias:
- * formulário em cima e listas embaixo ("Ativos" e "Inativos").
- *
- *   GET  /admin/produtos              listas, com o formulário vazio
- *   GET  /admin/produtos?editar=ID    listas, com o formulário preenchido
- *   POST /admin/produtos  acao=salvar    cria (id 0) ou altera (id > 0), com a foto opcional
- *   POST /admin/produtos  acao=excluir   apaga; se já foi vendido, desativa
- *   POST /admin/produtos  acao=reativar  devolve à loja um produto desativado
- *
- * @MultipartConfig permite receber arquivos (formulário com enctype="multipart/form-data").
- * O limite do Tomcat (10 MB) é só uma trava contra envios enormes; o limite de
- * verdade, com mensagem amigável, é o Fotos.TAMANHO_MAXIMO (2 MB).
- */
+// admin product CRUD: form on top, active and inactive lists below
 @WebServlet("/admin/produtos")
+// tomcat upload size limit
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 10 * 1024 * 1024, maxRequestSize = 11 * 1024 * 1024)
 public class AdminProdutosServlet extends HttpServlet {
 
     private static final String PAGINA = "/WEB-INF/views/admin/produtos.jsp";
-    private static final int TAMANHO_MAXIMO_DESCRICAO = 255;          // mesmo tamanho da coluna
-    // Usados pelo lerPreco
+    private static final int TAMANHO_MAXIMO_DESCRICAO = 255; // same size as the db column
+    // used by lerPreco
     private static final Pattern MILHAR_COM_PONTO = Pattern.compile("\\d{1,3}(\\.\\d{3})+");
     private static final Pattern NUMERO_COM_CENTAVOS = Pattern.compile("\\d+(\\.\\d{1,2})?");
-    private static final BigDecimal PRECO_MAXIMO = new BigDecimal("99999999.99");   // NUMERIC(10,2)
+    private static final BigDecimal PRECO_MAXIMO = new BigDecimal("99999999.99"); // NUMERIC(10,2)
 
     private final ProdutoDAO produtoDAO = new ProdutoDAO();
     private final CategoriaDAO categoriaDAO = new CategoriaDAO();
@@ -70,10 +58,7 @@ public class AdminProdutosServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        // Só o formulário de salvar envia arquivo (multipart); os de excluir e reativar
-        // são formulários comuns, e neles getParts() daria erro.
-        // Se o envio passar do limite do Tomcat, o formulário inteiro chega ilegível;
-        // getParts() é o que avisa, e então só resta voltar à lista com uma mensagem.
+        // only the save form is multipart. getParts() throws an exception if the upload is over the tomcat limit, and then the whole form can't be read
         if (ehMultipart(request)) {
             try {
                 request.getParts();
@@ -100,7 +85,7 @@ public class AdminProdutosServlet extends HttpServlet {
     private void salvar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int id = lerInteiro(request.getParameter("id"));   // 0 = produto novo
+        int id = lerInteiro(request.getParameter("id")); // 0 = produto novo
         Produto atual = null;
         if (id > 0) {
             atual = produtoDAO.findById(id);
@@ -118,7 +103,6 @@ public class AdminProdutosServlet extends HttpServlet {
         boolean removerFoto = request.getParameter("removerFoto") != null;
         Part parteFoto = ehMultipart(request) ? request.getPart("foto") : null;
 
-        // ---- Validação, na ordem dos campos do formulário ----
         String erro = null;
         BigDecimal preco = lerPreco(textoPreco);
         int quantidade = lerInteiro(textoQuantidade, -1);
@@ -146,7 +130,7 @@ public class AdminProdutosServlet extends HttpServlet {
             }
         }
 
-        // ---- Gravação: primeiro a foto, depois o banco ----
+        // saves the photo first, then the product
         String fotoNova = null;
         if (erro == null && extensao != null) {
             try {
@@ -164,22 +148,21 @@ public class AdminProdutosServlet extends HttpServlet {
             produto = new Produto(id, descricao, preco, quantidade, foto, categoria);
             boolean salvou = (id == 0) ? produtoDAO.insert(produto) : produtoDAO.update(produto);
             if (!salvou) {
-                Fotos.excluir(fotoNova);   // o banco não gravou: a foto nova ficaria órfã
+                Fotos.excluir(fotoNova); // the product wasn't saved, so the new photo isn't needed
                 erro = "Não foi possível salvar agora. Tente novamente em alguns minutos.";
             }
         }
 
         if (erro != null) {
-            // forward (e não redirect) para manter o que foi digitado; o JSP lê os campos
-            // de ${param}, porque um preço inválido não caberia num Produto.
-            // O arquivo escolhido não volta: o navegador não deixa preencher um campo de arquivo.
+            // forward keeps what was typed (the jsp reads it from ${param}).
+            // the chosen file is lost, a file input can't be filled again
             request.setAttribute("erro", erro);
             request.setAttribute("produtoEditado", atual);
             mostrarPagina(request, response);
             return;
         }
 
-        // A foto antiga só sai do disco depois que o banco já aponta para a nova (ou para nenhuma)
+        // the old photo is only deleted after the product is updated
         if (fotoAnterior != null && !fotoAnterior.equals(produto.getFoto())) {
             Fotos.excluir(fotoAnterior);
         }
@@ -201,11 +184,11 @@ public class AdminProdutosServlet extends HttpServlet {
 
         switch (produtoDAO.delete(produto.getId())) {
             case EXCLUIDO:
-                Fotos.excluir(produto.getFoto());   // o produto sumiu do banco; a foto não serve a mais ninguém
+                Fotos.excluir(produto.getFoto());
                 Sessao.definirMensagem(request, "success", "Produto excluído.");
                 break;
             case DESATIVADO:
-                // a foto fica: o produto continua no histórico e pode ser reativado
+                // keeps the photo, the product can be reactivated
                 Sessao.definirMensagem(request, "info",
                         "\"" + produto.getDescricao() + "\" já aparece em compras, então saiu da loja "
                       + "mas continua no histórico. Ele está em \"Inativos\", onde pode ser reativado.");
@@ -245,15 +228,6 @@ public class AdminProdutosServlet extends HttpServlet {
         return tipo != null && tipo.toLowerCase().startsWith("multipart/");
     }
 
-    /**
-     * Lê o preço como alguém digitaria. Aceita:
-     *   59,90   1.234,56   1234,56   formato brasileiro (vírgula nos centavos)
-     *   59.90   1234.56               ponto nos centavos
-     *   1.234   1.234.567             ponto só como separador de milhar
-     * A regra para o ponto: se há vírgula, ou se cada ponto separa grupos de
-     * exatamente três dígitos, ele é de milhar; senão, é dos centavos.
-     * Devolve null se não for um valor com até duas casas decimais.
-     */
     private BigDecimal lerPreco(String texto) {
         if (ValidadorUsuario.vazio(texto)) {
             return null;
@@ -267,15 +241,14 @@ public class AdminProdutosServlet extends HttpServlet {
         } else {
             normalizado = limpo;
         }
-        // Só dígitos, com até duas casas: barra "1e5", "-3" e outros formatos
-        // que o BigDecimal aceitaria
+        // blocks things like "1e5" or "-3", that BigDecimal would accept
         if (!NUMERO_COM_CENTAVOS.matcher(normalizado).matches()) {
             return null;
         }
         return new BigDecimal(normalizado);
     }
 
-    /** O id chega como texto; qualquer coisa que não seja número vira 0 (inexistente). */
+    // anything that isn't a number becomes 0
     private int lerInteiro(String valor) {
         return lerInteiro(valor, 0);
     }

@@ -93,17 +93,6 @@ public class Produto {
         this.ativo = ativo;
     }
 
-    public boolean temEstoque(int quantidadePedida) {
-        return quantidadePedida > 0 && quantidade >= quantidadePedida;
-    }
-
-    public void baixarEstoque(int quantidadeVendida) {
-        if (!temEstoque(quantidadeVendida)) {
-            throw new IllegalStateException("Estoque insuficiente para o produto: " + descricao);
-        }
-        this.quantidade -= quantidadeVendida;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

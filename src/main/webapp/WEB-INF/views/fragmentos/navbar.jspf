@@ -1,13 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
-<%--
-    Barra de navegação comum a todas as páginas (menos a de entrada).
-    A página precisa ter declarado a taglib "c" e a variável "raiz".
-    Opcional: <c:set var="menuAtivo" value="loja"/> destaca o link Loja
-    ("produtos" e "categorias" destacam os links do administrador).
-
-    Visitante: dropdown "Entrar" com o formulário de login, para entrar sem sair
-    da página. Logado: menu com o nome, Minha conta e Sair.
---%>
+<%-- navbar for every page except entrada.jsp. menuAtivo highlights the current link --%>
 <c:set var="usuarioNav" value="${sessionScope.usuarioLogado}"/>
 
 <nav class="navbar navbar-expand-lg bg-body border-bottom">
@@ -26,7 +18,7 @@
                     <a class="nav-link ${menuAtivo == 'loja' ? 'active' : ''}" href="${raiz}/loja"
                        ${menuAtivo == 'loja' ? 'aria-current="page"' : ''}>Loja</a>
                 </li>
-                <%-- Gerência: só para administradores (o AutenticacaoFilter protege as páginas de qualquer jeito) --%>
+                <%-- admin links --%>
                 <c:if test="${usuarioNav.admin}">
                     <li class="nav-item">
                         <a class="nav-link ${menuAtivo == 'produtos' ? 'active' : ''}" href="${raiz}/admin/produtos"
@@ -69,22 +61,13 @@
                 </c:when>
 
                 <c:otherwise>
-                    <%--
-                        Página atual, para voltar a ela depois de entrar. As JSPs são abertas
-                        por forward, então o requestURI seria o caminho da JSP dentro de
-                        WEB-INF; o endereço que o navegador pediu fica neste atributo.
-                    --%>
+                    <%-- current page, to come back to it after login --%>
                     <c:set var="destinoLogin" value="${requestScope['javax.servlet.forward.request_uri']}"/>
                     <c:if test="${not empty requestScope['javax.servlet.forward.query_string']}">
                         <c:set var="destinoLogin"
                                value="${destinoLogin}?${requestScope['javax.servlet.forward.query_string']}"/>
                     </c:if>
 
-                    <%--
-                        data-bs-auto-close="outside": o menu não fecha ao clicar nos campos.
-                        data-bs-display="static" com dropdown-menu-lg-end: no celular o menu
-                        abre alinhado pela esquerda do botão; em telas grandes, pela direita.
-                    --%>
                     <div class="dropdown dropdown-entrar">
                         <button type="button" class="btn btn-primary dropdown-toggle"
                                 data-bs-toggle="dropdown" data-bs-auto-close="outside"
@@ -94,12 +77,7 @@
                         <div class="dropdown-menu dropdown-menu-lg-end p-4">
                             <%@ include file="/WEB-INF/views/fragmentos/form-login.jspf" %>
 
-                            <%--
-                                "Criar conta" é um formulário GET, e não um link: o navegador monta
-                                e codifica o ?destino= sozinho. Com <c:url>, o Tomcat poderia
-                                acrescentar ;jsessionid=... ao endereço de um visitante sem o
-                                cookie da sessão, expondo o identificador na URL.
-                            --%>
+                            <%-- a GET form builds the ?destino= by itself; c:url could add ;jsessionid to the link --%>
                             <form action="${raiz}/cadastro" method="get" class="small mt-3 mb-0">
                                 <input type="hidden" name="destino" value="<c:out value='${destinoLogin}'/>">
                                 Ainda não criou uma conta?

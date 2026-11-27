@@ -1,16 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
-<%--
-    Formulário de login, usado na página de entrada e no dropdown "Entrar" da navbar.
-    Antes do include, a página pode definir:
-      destinoLogin  para onde ir depois de entrar (vazio: a loja, pelo Navegacao.destinoSeguro)
-      valoresLogin  valores para preencher depois de um erro (só o nome de usuário)
-
-    Os ids têm nomes próprios porque este formulário aparece na navbar de qualquer
-    página, e nomes genéricos já são usados em outras (o minha-conta.jsp tem id="login").
-
-    "Esqueci minha senha" fica para depois: exige envio de e-mail e um token com
-    validade guardado no banco. O link entraria entre o campo de senha e o botão.
---%>
+<%-- login form, used in entrada.jsp and in the navbar dropdown. optional: destinoLogin and valoresLogin --%>
 <form action="${raiz}/login" method="post" class="needs-validation" novalidate>
     <input type="hidden" name="destino" value="<c:out value='${destinoLogin}'/>">
 

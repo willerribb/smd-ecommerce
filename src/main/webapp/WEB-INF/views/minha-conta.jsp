@@ -4,12 +4,7 @@
 <c:set var="titulo" value="Minha conta"/>
 <c:set var="usuario" value="${sessionScope.usuarioLogado}"/>
 <c:set var="editandoDados" value="${secao == 'dados'}"/>
-<%--
-    campoErro vem do AtualizarDadosServlet quando o erro é de um campo só ("login" ou
-    "email"): o campo fica vermelho, com a mensagem logo abaixo dele, e recebe o foco.
-    data-erro-servidor: o app.js tira o vermelho assim que a pessoa começa a corrigir e
-    devolve à mensagem o texto de data-mensagem-padrao (o erro de formato do campo).
---%>
+<%-- campoErro: field refused by the server (login or email) --%>
 <c:set var="erroNoLogin" value="${editandoDados and campoErro == 'login'}"/>
 <c:set var="erroNoEmail" value="${editandoDados and campoErro == 'email'}"/>
 <!DOCTYPE html>
@@ -43,7 +38,6 @@
             <section class="card mb-4">
                 <div class="card-body p-4">
                     <h2 class="h5 mb-3">Dados pessoais</h2>
-                    <%-- Erro de um campo só aparece junto do campo; os outros, aqui no alto --%>
                     <c:if test="${editandoDados and empty campoErro}">
                         <div class="alert alert-danger" role="alert"><c:out value="${erro}"/></div>
                     </c:if>
@@ -134,13 +128,9 @@
                     <c:if test="${secao == 'excluir'}">
                         <div class="alert alert-danger" role="alert"><c:out value="${erro}"/></div>
                     </c:if>
-                    <%-- ultimoAdmin vem do MinhaContaServlet --%>
                     <c:choose>
-                        <c:when test="${ultimoAdmin}">
-                            <p class="text-body-secondary mb-0">
-                                Sua conta é a única de administrador e não pode ser excluída:
-                                sem ela, ninguém mais gerencia a loja.
-                            </p>
+                        <c:when test="${not empty avisoUltimoAdmin}">
+                            <p class="text-body-secondary mb-0"><c:out value="${avisoUltimoAdmin}"/></p>
                         </c:when>
                         <c:otherwise>
                             <p class="text-body-secondary mb-3">
@@ -159,8 +149,7 @@
     </div>
 </main>
 
-<%-- O modal só existe quando o botão que o abre existe --%>
-<c:if test="${not ultimoAdmin}">
+<c:if test="${empty avisoUltimoAdmin}">
 <div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="tituloModalExcluir" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <form class="modal-content needs-validation" action="${raiz}/minha-conta/excluir" method="post" novalidate>

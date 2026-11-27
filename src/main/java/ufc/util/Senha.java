@@ -9,12 +9,12 @@ public final class Senha {
     private Senha() {
     }
 
-    /** generates the hash string to be stored in the db */
+    // generates the hash string to be stored in the db
     public static String generateHash (String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(CUSTO));
     }
 
-    /** checks the password against the stored hash string */
+    // checks the password against the stored hash string
     public static boolean match (String password, String hash) {
         if (password == null || hash == null) return false;
 

@@ -1,25 +1,24 @@
 :root {
-    /* Paleta primária e destaque */
-    --iuve-magenta: #991464;            /* ação: botões, links, foco */
-    --iuve-magenta-escuro: #821155;     /* derivada: hover (15% mais escura, como o Bootstrap faz) */
-    --iuve-magenta-ativo: #7a1050;      /* derivada: botão pressionado (20% mais escura) */
-    --iuve-roxo-escuro: #2d132c;        /* texto e títulos */
-    --iuve-roxo-apoio: #6b5a6a;         /* derivada: texto secundário */
-    --iuve-carmesim-intenso: #c62b40;   /* erros */
+    /* colors based on the iuvi brand manual. the darker magentas are for hover and active */
+    --iuve-magenta: #991464;
+    --iuve-magenta-escuro: #821155;
+    --iuve-magenta-ativo: #7a1050;
+    --iuve-roxo-escuro: #2d132c;
+    --iuve-roxo-apoio: #6b5a6a;
+    --iuve-carmesim-intenso: #c62b40;
 
-    /* Paleta de apoio */
-    --iuve-cinza-claro: #e6dfd7;        /* superfícies (só fundo, nunca texto) */
-    --iuve-bege-suave: #fee6b5;         /* destaques pontuais */
-    --iuve-borda-campo: #9a8b99;        /* derivada: borda dos campos (contraste 3,2:1 com o branco) */
+    --iuve-cinza-claro: #e6dfd7;
+    --iuve-bege-suave: #fee6b5;
+    --iuve-borda-campo: #9a8b99;
 
-    /* Paleta secundária: vitrine e confirmações (campo válido, mensagem de sucesso) */
+    /* blues: store page and success messages */
     --iuve-azul-suave: #2b55d8;
-    --iuve-azul-iuvi: #1244b2;          /* confirmação */
+    --iuve-azul-iuvi: #1244b2;
     --iuve-azul-medio: #042e99;
-    --iuve-azul-escuro: #252568;        /* texto das mensagens de sucesso */
-    --iuve-azul-fundo: #d0daf0;         /* derivada: fundo das mensagens de sucesso */
-    --iuve-azul-borda: #a0b4e0;         /* derivada: borda das mensagens de sucesso */
-    --iuve-cinza-borda: #cfc9c2;        /* derivada: borda das mensagens informativas */
+    --iuve-azul-escuro: #252568;
+    --iuve-azul-fundo: #d0daf0;
+    --iuve-azul-borda: #a0b4e0;
+    --iuve-cinza-borda: #cfc9c2;
 
     --iuve-fonte-titulo: "the-henston", Georgia, "Times New Roman", serif;
     --iuve-fonte-texto: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -29,12 +28,12 @@
     --bs-body-color: var(--iuve-roxo-escuro);
     --bs-body-color-rgb: 45, 19, 44;
     --bs-heading-color: var(--iuve-roxo-escuro);
-    --bs-secondary-color: var(--iuve-roxo-apoio);   /* .form-text, .text-body-secondary */
+    --bs-secondary-color: var(--iuve-roxo-apoio);
     --bs-secondary-color-rgb: 107, 90, 106;
 
     --bs-primary: var(--iuve-magenta);
     --bs-primary-rgb: 153, 20, 100;
-    --bs-secondary: var(--iuve-roxo-apoio);         /* .text-secondary, .link-secondary */
+    --bs-secondary: var(--iuve-roxo-apoio);
     --bs-secondary-rgb: 107, 90, 106;
     --bs-danger: var(--iuve-carmesim-intenso);
     --bs-danger-rgb: 198, 43, 64;
@@ -115,27 +114,19 @@ h1, h2, h3, h4, h5, h6,
     max-width: 25rem;
 }
 
-/*
- * Campo de senha com o botão de mostrar dentro dele, na ponta direita.
- * HTML: <div class="campo-senha"> campo, botão (botao-senha.jspf), invalid-feedback </div>
- */
+/* password field with the show/hide button inside it */
 .campo-senha {
     position: relative;
 }
 
 .campo-senha > .form-control {
-    /*
-     * Espaço para o botão não cobrir o texto. O !important é necessário porque as
-     * regras de validação do Bootstrap (.was-validated .form-control:invalid) também
-     * mudam o padding e o fundo, e têm prioridade maior que esta regra.
-     */
+    /* !important because bootstrap's validation rules also change the padding and the background */
     padding-right: 2.75rem !important;
-    /* sem o ícone de válido e inválido: ele ocuparia o mesmo canto do botão.
-       O estado continua visível pela cor da borda e pela mensagem abaixo do campo. */
+    /* no valid/invalid icon here, the button is in the same spot */
     background-image: none !important;
 }
 
-/* O Edge tem um olho próprio nos campos de senha; sem isto, apareceriam dois */
+/* hides edge's own password eye */
 .campo-senha > .form-control::-ms-reveal {
     display: none;
 }
@@ -144,15 +135,14 @@ h1, h2, h3, h4, h5, h6,
     position: absolute;
     top: 0;
     right: 0;
-    z-index: 5;                     /* acima do campo, mesmo quando ele está em foco */
+    z-index: 5;
     display: flex;
     align-items: center;
-    /* mesma altura do .form-control: linha de texto + padding + bordas */
+    /* same height as .form-control */
     height: calc(1.5rem + 0.75rem + 2 * var(--bs-border-width));
     padding: 0 0.75rem;
 }
 
-/* Botão de mostrar senha: só o ícone muda de cor; o fundo fica o do campo */
 .btn-senha {
     --bs-btn-color: var(--iuve-roxo-apoio);
     --bs-btn-bg: transparent;
@@ -171,13 +161,13 @@ h1, h2, h3, h4, h5, h6,
     display: none;
 }
 
-/* Dropdown "Entrar" da navbar: largura do formulário de login, sem passar da tela no celular */
+/* login dropdown in the navbar */
 .dropdown-entrar .dropdown-menu {
     width: 20rem;
     max-width: calc(100vw - 2rem);
 }
 
-/* Vitrine: cards de produto. Os azuis da paleta ficam reservados para ela. */
+/* store page cards */
 .produto-foto {
     aspect-ratio: 1 / 1;
     object-fit: cover;
@@ -193,16 +183,16 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .produto-categoria {
-    color: var(--iuve-azul-suave);      /* contraste 6,2:1 com o branco */
+    color: var(--iuve-azul-suave);
 }
 
 .produto-preco {
-    color: var(--iuve-azul-medio);      /* contraste 11,3:1 com o branco */
+    color: var(--iuve-azul-medio);
     font-size: 1.25rem;
     font-weight: 600;
 }
 
-/* Administração: miniaturas das fotos na lista e no formulário de produtos */
+/* admin: product photo thumbnails */
 .miniatura {
     width: 3rem;
     height: 3rem;

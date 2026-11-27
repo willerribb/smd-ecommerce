@@ -15,14 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Login pelo formulário da página de entrada ou pelo dropdown "Entrar" da navbar
- * (os dois usam o form-login.jspf).
- *
- *   GET   logado: vai para a loja; visitante: página de entrada no painel de login
- *   POST  sucesso: vai para o destino; erro: página de entrada no painel de login,
- *         com a mensagem, o nome de usuário preenchido e o destino guardado
- */
+// login from the home page or from the navbar dropdown
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
@@ -55,9 +48,6 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (usuario == null) {
-            // O erro sempre volta para a página de entrada, mesmo quando o login
-            // foi tentado pelo dropdown da navbar; o destino vai junto, para a
-            // pessoa voltar à página onde estava depois de acertar.
             Map<String, String> valores = new HashMap<>();
             valores.put("login", login);
             valores.put("destino", destino);

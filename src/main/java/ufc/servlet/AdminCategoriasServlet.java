@@ -12,27 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * CRUD de categorias do administrador, numa página só:
- * formulário (nova ou edição) em cima e lista embaixo.
- *
- *   GET  /admin/categorias             lista, com o formulário vazio
- *   GET  /admin/categorias?editar=ID   lista, com o formulário preenchido
- *   POST /admin/categorias  acao=salvar   cria (id 0) ou altera (id > 0)
- *   POST /admin/categorias  acao=excluir  apaga, se não tiver produtos
- *
- * Não precisa conferir se o usuário é admin: o AutenticacaoFilter já
- * protege tudo que começa com /admin/.
- *
- * Diferente de /minha-conta (um servlet por ação), aqui um servlet só
- * atende as ações pelo parâmetro "acao": são operações sobre a mesma
- * página e a mesma tabela, e assim o fluxo do CRUD fica num arquivo.
- */
+// admin category CRUD: form and list in the same page, the action comes in the "acao" parameter
 @WebServlet("/admin/categorias")
 public class AdminCategoriasServlet extends HttpServlet {
 
     private static final String PAGINA = "/WEB-INF/views/admin/categorias.jsp";
-    private static final int TAMANHO_MAXIMO_NOME = 100;   // mesmo tamanho da coluna no banco
+    private static final int TAMANHO_MAXIMO_NOME = 100; // same size as the db column
 
     private final CategoriaDAO categoriaDAO = new CategoriaDAO();
 
@@ -72,7 +57,7 @@ public class AdminCategoriasServlet extends HttpServlet {
     private void salvar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int id = lerId(request.getParameter("id"));   // 0 = categoria nova
+        int id = lerId(request.getParameter("id")); // 0 = categoria nova
         String nome = ValidadorUsuario.limpar(request.getParameter("nome"));
 
         String erro = null;
@@ -93,7 +78,7 @@ public class AdminCategoriasServlet extends HttpServlet {
         }
 
         if (erro != null) {
-            // forward (e não redirect) para manter o que foi digitado no formulário
+            // forward keeps what was typed in the form
             request.setAttribute("erro", erro);
             request.setAttribute("categoriaEditada", categoria);
             mostrarPagina(request, response);
@@ -128,7 +113,7 @@ public class AdminCategoriasServlet extends HttpServlet {
         request.getRequestDispatcher(PAGINA).forward(request, response);
     }
 
-    /** O id chega como texto; qualquer coisa que não seja número vira 0 (inexistente). */
+    // anything that isn't a number becomes 0
     private int lerId(String valor) {
         try {
             return valor == null ? 0 : Integer.parseInt(valor.trim());

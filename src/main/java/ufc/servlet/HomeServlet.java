@@ -9,10 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Raiz do site: a página de entrada (login e cadastro).
- * Quem já entrou não precisa dela e vai direto para a loja.
- */
+// home page (login and signup)
 @WebServlet("")
 public class HomeServlet extends HttpServlet {
 

@@ -29,8 +29,6 @@ public class AtualizarDadosServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        // id vem sempre da sessão, nunca do formulário.
-        // assim ninguém consegue alterar os dados de outro usuário trocando um campo oculto
         Usuario logado = Sessao.getUsuarioLogado(request);
 
         String nome = ValidadorUsuario.limpar(request.getParameter("nome"));
@@ -39,9 +37,6 @@ public class AtualizarDadosServlet extends HttpServlet {
         String endereco = ValidadorUsuario.limpar(request.getParameter("endereco"));
 
         String erro = ValidadorUsuario.validarDados(nome, login, email, endereco);
-        // Quando o erro é de um campo só, a página marca esse campo em vermelho, com a
-        // mensagem logo abaixo dele, em vez de mostrá-la no alto da seção. O que foi
-        // digitado continua no campo, para a pessoa corrigir em vez de redigitar.
         if (erro == null && usuarioDAO.existeLogin(login, logado.getId())) {
             erro = "Esse nome de usuário já está em uso. Escolha outro.";
             request.setAttribute("campoErro", "login");
@@ -64,7 +59,7 @@ public class AtualizarDadosServlet extends HttpServlet {
             return;
         }
 
-        Sessao.atualizarUsuario(request, atualizado);   // mantém a sessão em dia
+        Sessao.atualizarUsuario(request, atualizado); // mantém a sessão em dia
         Sessao.definirMensagem(request, "success", "Seus dados foram atualizados.");
         response.sendRedirect(request.getContextPath() + "/minha-conta");
     }

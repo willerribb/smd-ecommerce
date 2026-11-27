@@ -25,11 +25,7 @@ public class MinhaContaServlet extends HttpServlet {
         mostrarPagina(request, response);
     }
 
-    /**
-     * Usado pelos servlets de /minha-conta/... quando há um erro de validação:
-     * mostra o painel de novo com a mensagem na seção correspondente
-     * ("dados", "senha" ou "excluir").
-     */
+    // used by some servlets to show a validation error
     static void mostrarErro(HttpServletRequest request, HttpServletResponse response,
                             String secao, String erro) throws ServletException, IOException {
         request.setAttribute("secao", secao);
@@ -37,16 +33,13 @@ public class MinhaContaServlet extends HttpServlet {
         mostrarPagina(request, response);
     }
 
-    /**
-     * Abre a página. Para o último administrador, avisa a JSP (atributo ultimoAdmin),
-     * que troca o botão "Excluir minha conta" por uma explicação.
-     */
+    // for the last admin, the page shows the warning instead of the delete button
     private static void mostrarPagina(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Usuario logado = Sessao.getUsuarioLogado(request);
-        boolean ultimoAdmin = logado != null && logado.isAdmin()
-                && new UsuarioDAO().contarAdminsAtivos() <= 1;
-        request.setAttribute("ultimoAdmin", ultimoAdmin);
+        if (logado != null && logado.isAdmin() && new UsuarioDAO().contarAdminsAtivos() <= 1) {
+            request.setAttribute("avisoUltimoAdmin", AVISO_ULTIMO_ADMIN);
+        }
         request.getRequestDispatcher(PAGINA).forward(request, response);
     }
 }

@@ -1,22 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
-<%--
-    Botão de mostrar e ocultar senha (seção 5 do app.js). Fica dentro do campo,
-    na ponta direita. A página monta assim:
-
-      <div class="campo-senha">
-          <input type="password" class="form-control" id="idDoCampo" ...>
-          <c:set var="campoSenha" value="idDoCampo"/>
-          <%@ include file="/WEB-INF/views/fragmentos/botao-senha.jspf" %>
-          <div class="invalid-feedback">...</div>
-      </div>
-
-    O .campo-senha (iuve.css) posiciona o botão por cima do campo e reserva
-    espaço para ele no texto digitado.
-
-    O aria-pressed informa ao leitor de tela se a senha está visível ("Mostrar senha,
-    pressionado"), e o iuve.css usa o mesmo atributo para trocar o ícone.
-    Os ícones vêm do Font Awesome (kit carregado no head.jspf).
---%>
+<%-- show/hide password button. goes inside .campo-senha, right after the input, with campoSenha = the input id --%>
 <button type="button" class="btn btn-senha"
         data-mostrar-senha="${campoSenha}" aria-label="Mostrar senha" aria-pressed="false">
     <i class="fa fa-eye fa-fw icone-mostrar" aria-hidden="true"></i>

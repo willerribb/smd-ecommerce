@@ -1,9 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
-<%--
-    Mensagem guardada na sessão antes de um redirecionamento
-    (Sessao.definirMensagem): exibida uma única vez e depois removida.
-    A página precisa ter declarado a taglib "c".
---%>
+<%-- message saved before a redirect (Sessao.definirMensagem), shown only once --%>
 <c:if test="${not empty sessionScope.mensagem}">
     <div class="alert alert-${sessionScope.tipoMensagem} alert-dismissible fade show" role="alert">
         <c:out value="${sessionScope.mensagem}"/>

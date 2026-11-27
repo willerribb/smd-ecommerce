@@ -1,23 +1,13 @@
 package ufc.dao;
 
-/**
- * Resultado de uma tentativa de exclusão.
- *
- * Um boolean só diria "deu certo" ou "não deu". Na exclusão há mais casos,
- * e cada um pede uma mensagem diferente para o administrador:
- * a categoria pode estar em uso, e o produto pode ter sido só desativado.
- */
+// result of a delete. a boolean isn't enough here, each case shows a different message to the admin
 public enum ResultadoExclusao {
 
-    /** A linha foi apagada do banco. */
-    EXCLUIDO,
+    EXCLUIDO, // removed from the db
 
-    /** Não podia ser apagada (está no histórico de vendas) e foi desativada. */
-    DESATIVADO,
+    DESATIVADO, // product that was already sold, only leaves the store
 
-    /** Não pode ser apagada porque outros registros dependem dela. */
-    EM_USO,
+    EM_USO, // category that still has products
 
-    /** O registro não existe ou houve erro de banco. */
-    FALHOU
+    FALHOU // not found or db error
 }

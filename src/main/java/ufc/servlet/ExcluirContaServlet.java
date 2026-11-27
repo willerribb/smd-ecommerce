@@ -34,8 +34,6 @@ public class ExcluirContaServlet extends HttpServlet {
 
         String erro = null;
         if (logado.isAdmin() && usuarioDAO.contarAdminsAtivos() <= 1) {
-            // A página já esconde o botão nesse caso; esta conferência vale para
-            // quem enviar o formulário por outro caminho
             erro = MinhaContaServlet.AVISO_ULTIMO_ADMIN;
         } else if (ValidadorUsuario.vazio(senha) || usuarioDAO.authenticate(logado.getLogin(), senha) == null) {
             erro = "A senha informada está incorreta. Sua conta não foi excluída.";

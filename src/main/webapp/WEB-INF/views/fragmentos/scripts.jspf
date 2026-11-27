@@ -1,7 +1,4 @@
 <%@ page pageEncoding="UTF-8" %>
-<%--
-    Scripts comuns, incluídos no fim do <body>. A ordem importa:
-    o app.js usa o objeto "bootstrap", que vem do bundle.
---%>
+<%-- scripts used by every page --%>
 <script src="${raiz}/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="${raiz}/js/app.js"></script>

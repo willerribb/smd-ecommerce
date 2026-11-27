@@ -2,18 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="raiz" value="${pageContext.request.contextPath}"/>
 <c:set var="titulo" value="Entrar"/>
-<%--
-    Página de entrada (login e cadastro). O HomeServlet só a mostra para visitantes.
-
-    Quando o login ou o cadastro falham, ou quando alguém abre uma área restrita
-    sem ter entrado, o servlet (ou o filtro) deixa um pedido na sessão com
-    Sessao.abrirPainel: qual painel abrir, uma mensagem e os valores para
-    preencher os campos. Esta página atende o pedido e o remove no fim, para
-    que ele valha uma única vez.
-
-    O destino (para onde ir depois de entrar) vai nos dois formulários, porque
-    a pessoa pode trocar de painel antes de enviar.
---%>
+<%-- the servlet (or the filter) leaves in the session which panel to open, a message and the form values (Sessao.abrirPainel) --%>
 <c:set var="painelPedido" value="${sessionScope.painel}"/>
 <c:set var="valores" value="${sessionScope.valoresPainel}"/>
 <c:set var="abrirCadastro" value="${painelPedido == 'cadastro'}"/>
@@ -42,7 +31,6 @@
                 <p>Sua plataforma de compras online.</p>
             </header>
 
-            <%-- Mensagens gerais, como "Você saiu da sua conta." --%>
             <%@ include file="/WEB-INF/views/fragmentos/mensagens.jspf" %>
 
             <!-- login panel -->
@@ -143,7 +131,7 @@
 
 <%@ include file="/WEB-INF/views/fragmentos/scripts.jspf" %>
 
-<%-- O pedido de abertura vale uma única vez --%>
+<%-- clears the panel request --%>
 <c:remove var="painel" scope="session"/>
 <c:remove var="mensagemPainel" scope="session"/>
 <c:remove var="tipoMensagemPainel" scope="session"/>

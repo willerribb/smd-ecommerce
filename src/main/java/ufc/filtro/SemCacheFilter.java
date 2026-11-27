@@ -11,24 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Pede ao navegador que não guarde nenhuma página do site (Cache-Control: no-store).
- *
- * O problema que resolve: depois de sair da conta, o botão Voltar mostrava a
- * loja como se a pessoa ainda estivesse logada ("Olá, Maria" na navbar). Não era
- * a sessão que continuava viva; era o navegador exibindo a cópia que tinha
- * guardado, sem perguntar nada ao servidor. Com no-store não existe cópia, e o
- * Voltar pede a página de novo, já sem a sessão.
- *
- * Antes, só o AutenticacaoFilter mandava esse cabeçalho, e só nas páginas
- * restritas. Toda página com a navbar mostra quem está logado, então todas
- * precisam dele. O AutenticacaoFilter continua mandando o mesmo cabeçalho;
- * a repetição não causa problema.
- *
- * Arquivos estáticos (CSS, JavaScript, imagens, fotos) ficam de fora: eles não
- * mudam com o login e devem continuar em cache, senão o site fica mais lento.
- * O FotoServlet define o cache das fotos por conta própria.
- */
+// no-store on every page, so the back button doesn't show the user still logged in after logout.
+// css, js and images don't change with the login, so they can stay in the cache
 @WebFilter("/*")
 public class SemCacheFilter implements Filter {
 

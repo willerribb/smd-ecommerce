@@ -1,15 +1,12 @@
-// Ambiente do IUVe no GitHub Codespaces.
-//
-// Ao criar o Codespace, o instalar.sh roda uma vez (PostgreSQL, banco, Tomcat).
-// A cada início, inclusive o primeiro, o iniciar.sh compila o projeto e sobe o site.
-// O site abre sozinho numa aba do navegador; se não abrir, use a aba PORTS (porta 8080).
+// IUVe on github codespaces: instalar.sh runs once, iniciar.sh on every start.
+// the site opens in a new tab (or PORTS tab, port 8080)
 {
     "name": "IUVe",
 
-    // Java 21 sobre Debian 12 (bookworm), imagem oficial de devcontainers
+    // java 21, debian 12
     "image": "mcr.microsoft.com/devcontainers/java:1-21-bookworm",
 
-    // O Java já vem na imagem ("version": "none"); a feature só acrescenta o Maven
+    // java is already in the image, this only adds maven
     "features": {
         "ghcr.io/devcontainers/features/java:1": {
             "version": "none",

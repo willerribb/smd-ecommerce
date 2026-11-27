@@ -3,9 +3,8 @@ package ufc.util;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-/** rules for user creation and profile editing.
- *  each method returns the first error message found (or no error message at all) */
-
+// rules for user creation and profile editing.
+// each method returns the first error message found (or no error message at all)
 public final class ValidadorUsuario {
 
     private static final Pattern FORMATO_LOGIN = Pattern.compile("[A-Za-z0-9._-]{6,50}");
@@ -16,7 +15,7 @@ public final class ValidadorUsuario {
     private ValidadorUsuario() {
     }
 
-    /** checks name, username, email and address */
+    // checks name, username, email and address
     public static String validarDados(String nome, String login, String email, String endereco) {
         if (vazio(nome) || vazio(login) || vazio(email) || vazio(endereco)) {
             return "Preencha todos os campos.";
@@ -34,7 +33,7 @@ public final class ValidadorUsuario {
         return null;
     }
 
-    /** checks a new password */
+    // checks a new password
     public static String validarNovaSenha(String senha, String confirmacao) {
         if (senha == null || senha.isEmpty()) {
             return "Preencha todos os campos.";
@@ -51,12 +50,12 @@ public final class ValidadorUsuario {
         return null;
     }
 
-    /** removes blank spaces from start and end of strings */
+    // removes blank spaces from start and end of strings
     public static String limpar(String valor) {
         return valor == null ? null : valor.trim();
     }
 
-    /** normalizes emails */
+    // normalizes emails
     public static String normalizarEmail(String email) {
         return email == null ? null : email.trim().toLowerCase();
     }

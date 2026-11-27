@@ -1,4 +1,2 @@
-# Scripts do Codespace rodam no Linux: precisam de quebra de linha LF.
-# Sem esta regra, o Git no Windows pode convertê-los para CRLF, e o bash
-# falha com erros como "$'\r': command not found".
+# .sh files run on linux (codespaces), so they need LF line endings
 *.sh text eol=lf

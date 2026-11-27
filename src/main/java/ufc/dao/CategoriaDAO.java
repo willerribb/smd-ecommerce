@@ -9,14 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Operações de banco de dados da tabela categoria.
- * Usado pelo CRUD de categorias do administrador e, depois,
- * pelo formulário de produtos (lista de categorias para escolher).
- */
 public class CategoriaDAO {
 
-    /** lists all categories in alphabetical order */
+    // lists all categories in alphabetical order
     public List<Categoria> listar() {
         String sql = "SELECT id, nome FROM categoria ORDER BY nome";
         List<Categoria> categorias = new ArrayList<>();
@@ -30,12 +25,12 @@ public class CategoriaDAO {
             }
 
         } catch (SQLException e) {
-            registrarErro("listar", e);
+            ErrosBanco.registrar("CategoriaDAO.listar", e);
         }
         return categorias;
     }
 
-    /** returns the category that matches the id, otherwise returns null */
+    // returns the category that matches the id, otherwise returns null
     public Categoria findById(int id) {
         String sql = "SELECT id, nome FROM categoria WHERE id = ?";
 
@@ -48,12 +43,12 @@ public class CategoriaDAO {
             }
 
         } catch (SQLException e) {
-            registrarErro("findById", e);
+            ErrosBanco.registrar("CategoriaDAO.findById", e);
             return null;
         }
     }
 
-    /** inserts a new category, id provided by the db */
+    // inserts a new category, id provided by the db
     public boolean insert(Categoria categoria) {
         String sql = "INSERT INTO categoria (nome) VALUES (?)";
 
@@ -73,12 +68,12 @@ public class CategoriaDAO {
             return true;
 
         } catch (SQLException e) {
-            registrarErro("insert", e);
+            ErrosBanco.registrar("CategoriaDAO.insert", e);
             return false;
         }
     }
 
-    /** renames a category */
+    // renames a category
     public boolean update(Categoria categoria) {
         String sql = "UPDATE categoria SET nome = ? WHERE id = ?";
 
@@ -90,18 +85,17 @@ public class CategoriaDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            registrarErro("update", e);
+            ErrosBanco.registrar("CategoriaDAO.update", e);
             return false;
         }
     }
 
-    /**
-     * Apaga a categoria. Em vez de consultar antes se ela tem produtos,
-     * tenta apagar e deixa o banco recusar: a regra fica num lugar só
-     * (o RESTRICT do createdb.sql) e não há intervalo entre a consulta
-     * e o DELETE em que alguém poderia cadastrar um produto nela.
-     */
+    // a category with products can't be deleted, even if the products are inactive
     public ResultadoExclusao delete(int id) {
+        if (temProdutos(id)) {
+            return ResultadoExclusao.EM_USO;
+        }
+
         String sql = "DELETE FROM categoria WHERE id = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -111,19 +105,31 @@ public class CategoriaDAO {
             return stmt.executeUpdate() > 0 ? ResultadoExclusao.EXCLUIDO : ResultadoExclusao.FALHOU;
 
         } catch (SQLException e) {
-            if (ErrosBanco.registroEmUso(e)) {
-                return ResultadoExclusao.EM_USO;   // não é erro do sistema, é regra de negócio
-            }
-            registrarErro("delete", e);
+            ErrosBanco.registrar("CategoriaDAO.delete", e);
             return ResultadoExclusao.FALHOU;
         }
     }
 
-    /**
-     * Confere se já existe outra categoria com esse nome, sem diferenciar
-     * maiúsculas e minúsculas (mesma regra do índice uk_categoria_nome).
-     * idIgnorado: na edição, a própria categoria não conta; na criação, use 0.
-     */
+    // checks if a category has products (active or not)
+    private boolean temProdutos(int id) {
+        String sql = "SELECT 1 FROM produto WHERE categoria_id = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            ErrosBanco.registrar("CategoriaDAO.temProdutos", e);
+            return false;
+        }
+    }
+
+    // checks if there's another category with the same name, ignoring upper/lower case
+    // idIgnorado: the category being edited (0 for a new one)
     public boolean existeNome(String nome, int idIgnorado) {
         String sql = "SELECT 1 FROM categoria WHERE LOWER(nome) = LOWER(?) AND id <> ?";
 
@@ -137,18 +143,12 @@ public class CategoriaDAO {
             }
 
         } catch (SQLException e) {
-            registrarErro("existeNome", e);
+            ErrosBanco.registrar("CategoriaDAO.existeNome", e);
             return false;
         }
     }
 
-    // Converte a linha atual do ResultSet em uma Categoria
     private Categoria mapear(ResultSet rs) throws SQLException {
         return new Categoria(rs.getInt("id"), rs.getString("nome"));
-    }
-
-    private void registrarErro(String operacao, SQLException e) {
-        System.err.println("Erro em CategoriaDAO." + operacao + " [SQLState " + e.getSQLState() + "]: "
-                + e.getMessage());
     }
 }

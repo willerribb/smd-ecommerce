@@ -5,17 +5,11 @@
 <c:set var="titulo" value="Produtos"/>
 <c:set var="menuAtivo" value="produtos"/>
 <fmt:setLocale value="pt_BR"/>
-<%--
-    produtoEditado vem do servlet quando um produto existente está sendo editado
-    (?editar=ID, ou erro ao salvar uma alteração); num produto novo, fica vazio.
-
-    Depois de um erro, os campos mostram o que foi digitado (${param}), e não o
-    que está no banco: um preço como "abc" não caberia num Produto.
---%>
+<%-- after an error, the fields show what was typed (param) --%>
 <c:set var="editando" value="${not empty produtoEditado}"/>
 <c:set var="comErro" value="${not empty erro}"/>
 <c:set var="valorDescricao" value="${comErro ? param.descricao : produtoEditado.descricao}"/>
-<%-- Na edição, o preço aparece como se digita no Brasil: 1234,56 (sem o ponto de milhar) --%>
+<%-- price shown as 1234,56 when editing --%>
 <c:if test="${editando}">
     <fmt:formatNumber var="precoDoBanco" value="${produtoEditado.preco}"
                       minFractionDigits="2" maxFractionDigits="2" groupingUsed="false"/>
@@ -46,7 +40,6 @@
 
             <%@ include file="/WEB-INF/views/fragmentos/mensagens.jspf" %>
 
-            <%-- ===================== Formulário: novo ou edição ===================== --%>
             <section class="card mb-4" aria-labelledby="tituloFormProduto">
                 <div class="card-body p-4">
                     <h2 id="tituloFormProduto" class="h5 mb-3">
@@ -66,7 +59,6 @@
                         </c:when>
 
                         <c:otherwise>
-                            <%-- multipart/form-data: o formato que permite enviar arquivos --%>
                             <form action="${raiz}/admin/produtos" method="post" enctype="multipart/form-data"
                                   class="needs-validation" novalidate>
                                 <input type="hidden" name="acao" value="salvar">
@@ -96,13 +88,7 @@
                                         <label for="precoProduto" class="form-label">Preço</label>
                                         <div class="input-group has-validation">
                                             <span class="input-group-text">R$</span>
-                                            <%--
-                                                type="text", e não "number": no campo numérico o navegador controla
-                                                o formato pelo idioma do sistema e recusava a vírgula. Aqui vale
-                                                59,90 ou 59.90 ou 1.234,56; o servidor (lerPreco) entende os três.
-                                                inputmode="decimal" abre o teclado numérico no celular.
-                                                O pattern repete a regra do servidor para o aviso aparecer antes do envio.
-                                            --%>
+                                            <%-- text input so the comma works. the pattern is the same rule used in lerPreco --%>
                                             <input type="text" class="form-control" id="precoProduto" name="preco"
                                                    value="<c:out value='${valorPreco}'/>" placeholder="0,00"
                                                    inputmode="decimal" maxlength="14" autocomplete="off"
@@ -133,11 +119,7 @@
                                             </div>
                                         </div>
                                     </c:if>
-                                    <%--
-                                        data-tamanho-maximo: o app.js avisa antes de enviar (2 MB = 2097152 bytes).
-                                        data-limpar: o botão desfaz a escolha do arquivo (seção 8 do app.js);
-                                        fica desativado enquanto nenhum arquivo foi escolhido.
-                                    --%>
+                                    <%-- 2097152 bytes = 2 MB --%>
                                     <div class="input-group has-validation">
                                         <input type="file" class="form-control" id="fotoProduto" name="foto"
                                                accept="image/jpeg,image/png,image/webp" data-tamanho-maximo="2097152"
@@ -168,7 +150,6 @@
                 </div>
             </section>
 
-            <%-- ============================ Ativos ============================ --%>
             <section class="card mb-4" aria-labelledby="tituloAtivos">
                 <div class="card-body p-4">
                     <h2 id="tituloAtivos" class="h5 mb-3">Ativos</h2>
@@ -247,7 +228,6 @@
                 </div>
             </section>
 
-            <%-- =========================== Inativos =========================== --%>
             <c:if test="${not empty produtosInativos}">
                 <section class="card" aria-labelledby="tituloInativos">
                     <div class="card-body p-4">

@@ -15,15 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Cadastro de cliente.
- *
- *   GET   logado: vai para a loja; visitante: página de entrada no painel de
- *         cadastro. Aceita ?destino=, enviado pelo "Criar conta" do dropdown.
- *   POST  sucesso: cria o cliente (admin sempre false), entra na conta e vai
- *         para o destino; erro: painel de cadastro com a mensagem e os campos
- *         preenchidos de novo (exceto as senhas)
- */
+// customer signup (admin is always false here)
 @WebServlet("/cadastro")
 public class CadastroClienteServlet extends HttpServlet {
 
@@ -56,7 +48,7 @@ public class CadastroClienteServlet extends HttpServlet {
         String login = ValidadorUsuario.limpar(request.getParameter("login"));
         String email = ValidadorUsuario.normalizarEmail(request.getParameter("email"));
         String endereco = ValidadorUsuario.limpar(request.getParameter("endereco"));
-        String senha = request.getParameter("senha");                 // senha não leva trim
+        String senha = request.getParameter("senha"); // senha não leva trim
         String confirmacao = request.getParameter("confirmacaoSenha");
         String destino = Navegacao.destinoSeguro(request, request.getParameter("destino"));
 
@@ -89,7 +81,6 @@ public class CadastroClienteServlet extends HttpServlet {
             return;
         }
 
-        // Único caso de login automático na plataforma
         Sessao.iniciar(request, novoCliente);
         Sessao.definirMensagem(request, "success",
                 "Conta criada! Boas-vindas, " + novoCliente.getPrimeiroNome() + ".");

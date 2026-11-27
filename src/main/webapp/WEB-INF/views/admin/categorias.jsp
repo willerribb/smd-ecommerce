@@ -3,12 +3,7 @@
 <c:set var="raiz" value="${pageContext.request.contextPath}"/>
 <c:set var="titulo" value="Categorias"/>
 <c:set var="menuAtivo" value="categorias"/>
-<%--
-    categoriaEditada vem do servlet em dois casos:
-      ?editar=ID              a categoria do banco (id > 0)
-      erro ao salvar          o que foi digitado (id 0 se era uma categoria nova)
-    Por isso "editando" olha o id, e não só se o atributo existe.
---%>
+<%-- categoriaEditada comes from ?editar=ID or from an error when saving (then the id is 0 if it was a new one) --%>
 <c:set var="editando" value="${not empty categoriaEditada and categoriaEditada.id != 0}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -33,7 +28,6 @@
 
             <%@ include file="/WEB-INF/views/fragmentos/mensagens.jspf" %>
 
-            <%-- ===================== Formulário: nova ou edição ===================== --%>
             <section class="card mb-4" aria-labelledby="tituloFormCategoria">
                 <div class="card-body p-4">
                     <h2 id="tituloFormCategoria" class="h5 mb-3">
@@ -68,7 +62,6 @@
                 </div>
             </section>
 
-            <%-- ============================ Lista ============================ --%>
             <section class="card" aria-labelledby="tituloListaCategorias">
                 <div class="card-body p-4">
                     <h2 id="tituloListaCategorias" class="h5 mb-3">Categorias cadastradas</h2>
@@ -93,14 +86,12 @@
                                             <td><c:out value="${categoria.nome}"/></td>
                                             <td class="text-end">
                                                 <div class="d-inline-flex gap-2">
-                                                    <%-- O texto escondido diz ao leitor de tela QUAL categoria
-                                                         o botão edita; sem ele, ouviria "Editar, Editar, Editar..." --%>
+                                                    <%-- hidden text for screen readers --%>
                                                     <a href="${raiz}/admin/categorias?editar=${categoria.id}"
                                                        class="btn btn-sm btn-outline-secondary">
                                                         Editar<span class="visually-hidden"> <c:out value="${categoria.nome}"/></span>
                                                     </a>
 
-                                                    <%-- Exclusão por POST (nunca por link), com confirmação no app.js --%>
                                                     <form action="${raiz}/admin/categorias" method="post" class="m-0"
                                                           data-confirmar="Excluir a categoria <c:out value='${categoria.nome}'/>?">
                                                         <input type="hidden" name="acao" value="excluir">

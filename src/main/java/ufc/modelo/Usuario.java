@@ -9,7 +9,7 @@ public class Usuario implements Serializable {
     private int id;
     private String nome;
     private String login;
-    private String senha;      // implementar hash?
+    private String senha;      // bcrypt hash
     private String email;
     private String endereco;
     private boolean admin;

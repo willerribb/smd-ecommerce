@@ -14,7 +14,7 @@ public final class Sessao {
     public static final String MENSAGEM = "mensagem";
     public static final String TIPO_MENSAGEM = "tipoMensagem";
 
-    // Pedido para a página de entrada (ver abrirPainel)
+    // read by entrada.jsp
     public static final String PAINEL = "painel";
     public static final String MENSAGEM_PAINEL = "mensagemPainel";
     public static final String TIPO_MENSAGEM_PAINEL = "tipoMensagemPainel";
@@ -25,13 +25,13 @@ public final class Sessao {
     private Sessao() {
     }
 
-    /** retorna o usuario logado ou null */
+    // retorna o usuario logado ou null
     public static Usuario getUsuarioLogado(HttpServletRequest request) {
         HttpSession sessao = request.getSession(false);   // false: não cria sessão nova
         return sessao == null ? null : (Usuario) sessao.getAttribute(USUARIO_LOGADO);
     }
 
-    /** descarta a sessao anterior e inicia uma nova */
+    // descarta a sessao anterior e inicia uma nova
     public static void iniciar(HttpServletRequest request, Usuario usuario) {
         encerrar(request);
         HttpSession nova = request.getSession(true);
@@ -39,13 +39,13 @@ public final class Sessao {
         atualizarUsuario(request, usuario);
     }
 
-    /** atualiza o usuario da sessão */
+    // atualiza o usuario da sessão
     public static void atualizarUsuario(HttpServletRequest request, Usuario usuario) {
         usuario.setSenha(null);   // a senha nunca fica guardada na sessão
         request.getSession().setAttribute(USUARIO_LOGADO, usuario);
     }
 
-    /** encerra a sessão atual */
+    // encerra a sessão atual
     public static void encerrar(HttpServletRequest request) {
         HttpSession sessao = request.getSession(false);
         if (sessao != null) {
@@ -59,20 +59,8 @@ public final class Sessao {
         sessao.setAttribute(MENSAGEM, texto);
     }
 
-    /**
-     * Deixa um pedido para a página de entrada, que é lido pelo entrada.jsp
-     * depois do redirecionamento para a raiz (e removido por ele no fim,
-     * para valer uma única vez).
-     *
-     *   painel    "login" ou "cadastro": qual dos dois painéis aparece aberto
-     *   tipo      tipo do alerta do Bootstrap ("danger", "warning"...); pode ser null
-     *   mensagem  texto do alerta, exibido dentro do painel; pode ser null
-     *   valores   campos para preencher de novo (nunca senhas) e o "destino",
-     *             para onde o usuário vai depois de entrar; pode ser null
-     *
-     * Usado pelo LoginServlet e pelo CadastroClienteServlet quando algo dá errado,
-     * e pelo AutenticacaoFilter quando alguém abre uma área restrita sem login.
-     */
+    // tells entrada.jsp which panel to open ("login" or "cadastro"), with an alert and the form values
+    // tipo, mensagem and valores can be null
     public static void abrirPainel(HttpServletRequest request, String painel, String tipo,
                                    String mensagem, Map<String, String> valores) {
         HttpSession sessao = request.getSession(true);

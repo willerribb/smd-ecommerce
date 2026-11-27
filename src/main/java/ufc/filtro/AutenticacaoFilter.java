@@ -35,9 +35,8 @@ public class AutenticacaoFilter implements Filter {
 
         Usuario usuario = Sessao.getUsuarioLogado(request);
         if (usuario == null) {
-            // Guarda o endereço pedido (com a query string, como ?editar=3) para
-            // voltar a ele depois do login. Num POST não dá para repetir o envio,
-            // então o destino passa a ser o perfil.
+            // saves the requested page (with ?editar=3 etc.) to go back after login.
+            // a POST can't be repeated, so in that case it goes to minha-conta
             String destino = request.getContextPath() + "/minha-conta";
             if ("GET".equals(request.getMethod())) {
                 String consulta = request.getQueryString();

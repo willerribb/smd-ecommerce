@@ -9,10 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Vitrine, aberta a visitantes e a quem já entrou.
- * Mostra só produtos ativos e com estoque (ProdutoDAO.listarDisponiveis).
- */
+// store page, open to everyone (logged in or not)
 @WebServlet("/loja")
 public class LojaServlet extends HttpServlet {
 

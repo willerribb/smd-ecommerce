@@ -1,15 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
-<%--
-    Conteúdo comum do <head>. A página precisa definir, antes do include:
-      <c:set var="raiz" value="${pageContext.request.contextPath}"/>
-      <c:set var="titulo" value="Título da página"/>
-
-    Fontes e ícones vêm de servidores externos, então o site precisa de internet:
-      The Henston      Adobe Fonts, kit ligado à conta do Willer (títulos)
-      Instrument Sans  Google Fonts (texto)
-      Font Awesome     kit ligado à conta do Willer (ícones, como o olho do botão de senha)
-    Eles vêm antes do styles.css e do iuve.css, como no protótipo.
---%>
+<%-- needs raiz and titulo. fonts and icons are loaded from adobe fonts, google fonts and font awesome --%>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><c:out value="${titulo}"/> | IUVe</title>
